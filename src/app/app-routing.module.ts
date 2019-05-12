@@ -4,6 +4,8 @@ import { HomeComponent } from './views/home/home.component';
 import { ViewComponent } from './views/posts/view/view.component';
 import { CreateComponent } from './views/blog/create/create.component';
 import { BlogComponent } from './views/blog/blog.component';
+import { LoginComponent } from './views/auth/login/login.component';
+import { RegisterComponent } from './views/auth/register/register.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'home', pathMatch: 'full'},
@@ -14,8 +16,13 @@ const routes: Routes = [
   ]},
   {path: 'blog', component: BlogComponent, children: [
     {path: '', redirectTo: 'create', pathMatch: 'full'},    
-    {path: 'create', component: CreateComponent}
-  ]},
+    {path: 'create', component: CreateComponent},
+    {path: 'auth', children: [
+      {path: '', redirectTo: 'login', pathMatch: 'full'},    
+      {path: 'login', component: LoginComponent},
+      {path: 'register', component: RegisterComponent},
+    ]},
+  ]}
 ];
 
 @NgModule({

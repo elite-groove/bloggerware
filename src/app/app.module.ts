@@ -19,6 +19,8 @@ import { BlogComponent } from './views/blog/blog.component';
 import { FormsModule } from '@angular/forms';
 import { FormParser } from './classes/form-parser';
 import { HttpClientModule } from '@angular/common/http';
+import { RegisterComponent } from './views/auth/register/register.component';
+import { LoginComponent } from './views/auth/login/login.component';
 
 
 const icons: IconDefinition[] = [ AccountBookFill, LockOutline, AlertFill, TeamOutline, UserOutline ];
@@ -29,7 +31,9 @@ const icons: IconDefinition[] = [ AccountBookFill, LockOutline, AlertFill, TeamO
     CreateComponent,
     ViewComponent,
     HomeComponent,
-    BlogComponent
+    BlogComponent,
+    RegisterComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
