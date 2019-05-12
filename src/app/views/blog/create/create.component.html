@@ -4,24 +4,30 @@
 </nz-breadcrumb>
 <div *ngIf="!post?.created">
   <form #form (submit)="onSubmit(form)">
+    <h1>{{ 'Subir foto de portada' }}</h1>
+    <!-- upload poster image -->
+
+    <div class="clearfix">
+      <nz-upload nzAction="https://jsonplaceholder.typicode.com/posts/" nzListType="picture" [(nzFileList)]="fileList1" [nzCustomRequest]="handleUpload">
+        <button nz-button><i nz-icon nzType="upload"></i><span>Upload</span></button>
+      </nz-upload>
+    </div>
+
+    <!-- upload end -->
     <h1>{{'Titulo'}}</h1>
-    <textarea name="title" [ngModelOptions]="{standalone: true}" nz-input placeholder="Autosize height based on content lines"
-      ngModel nzAutosize></textarea>
+    <textarea name="title" [ngModelOptions]="{standalone: true}" nz-input
+      placeholder="Autosize height based on content lines" ngModel nzAutosize></textarea>
     <div style="margin:24px 0;"></div>
     <h1>{{'Contenido'}}</h1>
     <textarea name="content" [ngModelOptions]="{standalone: true}" nz-input
       placeholder="Autosize height with minimum and maximum number of lines" [(ngModel)]="value"
       [nzAutosize]="{ minRows: 6, maxRows: 6 }"></textarea>
-      <button type="submit" nz-button [nzSize]="'large'" nzType="primary">{{'Crear Articulo'}}</button>
+    <button type="submit" nz-button [nzSize]="'large'" nzType="primary">{{'Crear Articulo'}}</button>
   </form>
 </div>
 <div *ngIf="post?.created" class="successful">
-  <nz-alert
-      nzType="success"
-      nzMessage="Articulo se creo"
-      [nzDescription]="successLink"
-    ></nz-alert>
-    <ng-template #successLink>
-        {{'Articulo a sido publicado'}} <a [href]="'/posts/view/' + post?.id">{{'Ver Articulo'}}</a>
-    </ng-template>
+  <nz-alert nzType="success" nzMessage="Articulo se creo" [nzDescription]="successLink"></nz-alert>
+  <ng-template #successLink>
+    {{'Articulo a sido publicado'}} <a [href]="'/posts/view/' + post?.id">{{'Ver Articulo'}}</a>
+  </ng-template>
 </div>

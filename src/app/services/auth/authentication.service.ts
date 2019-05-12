@@ -19,7 +19,7 @@ export class AuthenticationService {
     return this._window.location.href = (environment.host + '/auth/google/callback');
   }
 
-  register() {
-
+  isLoggedIn() {
+    return this._window.localStorage['token'] ? true : false;
   }
 }

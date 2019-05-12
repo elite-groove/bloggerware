@@ -400,7 +400,8 @@ var AuthenticationService = /** @class */ (function () {
     AuthenticationService.prototype.googleLogin = function () {
         return this._window.location.href = (src_environments_environment__WEBPACK_IMPORTED_MODULE_3__["environment"].host + '/auth/google/callback');
     };
-    AuthenticationService.prototype.register = function () {
+    AuthenticationService.prototype.isLoggedIn = function () {
+        return this._window.localStorage['token'] ? true : false;
     };
     AuthenticationService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
@@ -454,6 +455,48 @@ var BlogService = /** @class */ (function () {
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"], _auth0_angular_jwt__WEBPACK_IMPORTED_MODULE_4__["JwtHelperService"]])
     ], BlogService);
     return BlogService;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/services/utility.service.ts":
+/*!*********************************************!*\
+  !*** ./src/app/services/utility.service.ts ***!
+  \*********************************************/
+/*! exports provided: UtilityService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UtilityService", function() { return UtilityService; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var ng_zorro_antd__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ng-zorro-antd */ "./node_modules/ng-zorro-antd/fesm5/ng-zorro-antd.js");
+
+
+
+var UtilityService = /** @class */ (function () {
+    function UtilityService(notification) {
+        this.notification = notification;
+    }
+    /**
+     *
+     * @param {String} type success, info, warning, error
+     * @param {String} title
+     * @param {String} content
+     */
+    UtilityService.prototype.createNotification = function (type, title, content) {
+        this.notification.create(type, title, content);
+    };
+    UtilityService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
+            providedIn: 'root'
+        }),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [ng_zorro_antd__WEBPACK_IMPORTED_MODULE_2__["NzNotificationService"]])
+    ], UtilityService);
+    return UtilityService;
 }());
 
 
@@ -723,7 +766,7 @@ var BlogComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<nz-breadcrumb style=\"margin:16px 0;\">\n  <nz-breadcrumb-item>{{ 'blog' }}</nz-breadcrumb-item>\n  <nz-breadcrumb-item>{{ 'crear' }}</nz-breadcrumb-item>\n</nz-breadcrumb>\n<div *ngIf=\"!post?.created\">\n  <form #form (submit)=\"onSubmit(form)\">\n    <h1>{{'Titulo'}}</h1>\n    <textarea name=\"title\" [ngModelOptions]=\"{standalone: true}\" nz-input placeholder=\"Autosize height based on content lines\"\n      ngModel nzAutosize></textarea>\n    <div style=\"margin:24px 0;\"></div>\n    <h1>{{'Contenido'}}</h1>\n    <textarea name=\"content\" [ngModelOptions]=\"{standalone: true}\" nz-input\n      placeholder=\"Autosize height with minimum and maximum number of lines\" [(ngModel)]=\"value\"\n      [nzAutosize]=\"{ minRows: 6, maxRows: 6 }\"></textarea>\n      <button type=\"submit\" nz-button [nzSize]=\"'large'\" nzType=\"primary\">{{'Crear Articulo'}}</button>\n  </form>\n</div>\n<div *ngIf=\"post?.created\" class=\"successful\">\n  <nz-alert\n      nzType=\"success\"\n      nzMessage=\"Articulo se creo\"\n      [nzDescription]=\"successLink\"\n    ></nz-alert>\n    <ng-template #successLink>\n        {{'Articulo a sido publicado'}} <a [href]=\"'/posts/view/' + post?.id\">{{'Ver Articulo'}}</a>\n    </ng-template>\n</div>\n"
+module.exports = "<nz-breadcrumb style=\"margin:16px 0;\">\n  <nz-breadcrumb-item>{{ 'blog' }}</nz-breadcrumb-item>\n  <nz-breadcrumb-item>{{ 'crear' }}</nz-breadcrumb-item>\n</nz-breadcrumb>\n<div *ngIf=\"!post?.created\">\n  <form #form (submit)=\"onSubmit(form)\">\n    <h1>{{ 'Subir foto de portada' }}</h1>\n    <!-- upload poster image -->\n\n    <div class=\"clearfix\">\n      <nz-upload nzAction=\"https://jsonplaceholder.typicode.com/posts/\" nzListType=\"picture\" [(nzFileList)]=\"fileList1\" [nzCustomRequest]=\"handleUpload\">\n        <button nz-button><i nz-icon nzType=\"upload\"></i><span>Upload</span></button>\n      </nz-upload>\n    </div>\n\n    <!-- upload end -->\n    <h1>{{'Titulo'}}</h1>\n    <textarea name=\"title\" [ngModelOptions]=\"{standalone: true}\" nz-input\n      placeholder=\"Autosize height based on content lines\" ngModel nzAutosize></textarea>\n    <div style=\"margin:24px 0;\"></div>\n    <h1>{{'Contenido'}}</h1>\n    <textarea name=\"content\" [ngModelOptions]=\"{standalone: true}\" nz-input\n      placeholder=\"Autosize height with minimum and maximum number of lines\" [(ngModel)]=\"value\"\n      [nzAutosize]=\"{ minRows: 6, maxRows: 6 }\"></textarea>\n    <button type=\"submit\" nz-button [nzSize]=\"'large'\" nzType=\"primary\">{{'Crear Articulo'}}</button>\n  </form>\n</div>\n<div *ngIf=\"post?.created\" class=\"successful\">\n  <nz-alert nzType=\"success\" nzMessage=\"Articulo se creo\" [nzDescription]=\"successLink\"></nz-alert>\n  <ng-template #successLink>\n    {{'Articulo a sido publicado'}} <a [href]=\"'/posts/view/' + post?.id\">{{'Ver Articulo'}}</a>\n  </ng-template>\n</div>\n"
 
 /***/ }),
 
@@ -754,6 +797,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_classes_form_parser__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/classes/form-parser */ "./src/app/classes/form-parser.ts");
 /* harmony import */ var src_app_services_blog_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/services/blog.service */ "./src/app/services/blog.service.ts");
 /* harmony import */ var ng_zorro_antd__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ng-zorro-antd */ "./node_modules/ng-zorro-antd/fesm5/ng-zorro-antd.js");
+/* harmony import */ var src_app_services_utility_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/services/utility.service */ "./src/app/services/utility.service.ts");
+
 
 
 
@@ -761,43 +806,55 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var CreateComponent = /** @class */ (function () {
-    function CreateComponent(fb, formParser, blogService, notification) {
+    function CreateComponent(fb, formParser, blogService, notification, notify) {
+        var _this = this;
         this.fb = fb;
         this.formParser = formParser;
         this.blogService = blogService;
         this.notification = notification;
+        this.notify = notify;
         this.post = {
             created: false,
             id: ''
+        };
+        this.defaultFileList = [];
+        this.fileList1 = this.defaultFileList.slice();
+        this.handleUpload = function (item) {
+            _this.defaultFileList.push(item.file);
         };
     }
     CreateComponent.prototype.ngOnInit = function () {
     };
     CreateComponent.prototype.ngAfterViewChecked = function () {
-        // this.al.createEmbeddedView(this.successLink, { $implicit: 'value' });
-    };
-    /**
-     *
-     * @param {String} type success, info, warning, error
-     * @param {String} title
-     * @param {String} content
-     */
-    CreateComponent.prototype.createNotification = function (type, title, content) {
-        this.notification.create(type, title, content);
     };
     CreateComponent.prototype.onSubmit = function (form) {
         var _this = this;
         var formValues = this.formParser.parse(form);
+        formValues.avatar = this.chosenFile;
+        for (var values in formValues) {
+            if (formValues[values] !== undefined) {
+                return;
+            }
+            ;
+        }
         this.blogService.createPost(formValues).toPromise().then(function (post) {
             console.log(post);
-            _this.createNotification('success', 'Exitoso', 'El articulo se creo con exito.');
+            _this.notify.createNotification('success', 'Exitoso', 'El articulo se creo con exito.');
             _this.post.created = true;
             _this.post.id = post._id;
             _this.successLink.createEmbeddedView({ $implicit: 'value' });
         }).catch(function (err) {
-            _this.createNotification('error', 'Error', 'Algo salio mal, contacta al administrador si sigue sin funcionar. 510-283-8390');
+            _this.notify.createNotification('error', 'Error', 'Algo salio mal, contacta al administrador si sigue sin funcionar. 510-283-8390');
         });
         console.log(formValues);
+    };
+    CreateComponent.prototype.fileChange = function ($event) {
+        var _this = this;
+        var reader = new FileReader();
+        reader.readAsDataURL($event.target.files[0]);
+        reader.onload = function () {
+            _this.chosenFile = reader.result;
+        };
     };
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('successLink'),
@@ -810,7 +867,7 @@ var CreateComponent = /** @class */ (function () {
             styles: [__webpack_require__(/*! ./create.component.scss */ "./src/app/views/blog/create/create.component.scss")]
         }),
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormBuilder"], src_app_classes_form_parser__WEBPACK_IMPORTED_MODULE_3__["FormParser"], src_app_services_blog_service__WEBPACK_IMPORTED_MODULE_4__["BlogService"],
-            ng_zorro_antd__WEBPACK_IMPORTED_MODULE_5__["NzNotificationService"]])
+            ng_zorro_antd__WEBPACK_IMPORTED_MODULE_5__["NzNotificationService"], src_app_services_utility_service__WEBPACK_IMPORTED_MODULE_6__["UtilityService"]])
     ], CreateComponent);
     return CreateComponent;
 }());
