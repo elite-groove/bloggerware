@@ -385,14 +385,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
 /* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/environments/environment */ "./src/environments/environment.ts");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
+
 
 
 
 
 var AuthenticationService = /** @class */ (function () {
     function AuthenticationService(http) {
+        var _this = this;
         this.http = http;
         this._window = window;
+        this._authConfig = {
+            isLoggedIn: false
+        };
+        this.authConfig = new rxjs__WEBPACK_IMPORTED_MODULE_4__["BehaviorSubject"](this._authConfig);
+        this.authConfig.subscribe(function (authConfig) {
+            _this._authConfig = authConfig;
+        });
+        // iniitalize user logged in state
+        this.checkLoggedIn();
     }
     AuthenticationService.prototype.saveToken = function (token) {
         this._window.localStorage['token'] = token;
@@ -400,8 +412,17 @@ var AuthenticationService = /** @class */ (function () {
     AuthenticationService.prototype.googleLogin = function () {
         return this._window.location.href = (src_environments_environment__WEBPACK_IMPORTED_MODULE_3__["environment"].host + '/auth/google/callback');
     };
-    AuthenticationService.prototype.isLoggedIn = function () {
-        return this._window.localStorage['token'] ? true : false;
+    AuthenticationService.prototype.checkLoggedIn = function () {
+        var isLoggedIn = this._window.localStorage['token'] ? true : false;
+        this.updateLoggedInStatus(isLoggedIn);
+    };
+    AuthenticationService.prototype.updateLoggedInStatus = function (status) {
+        this._authConfig.isLoggedIn = status;
+        this.authConfig.next(this._authConfig);
+    };
+    AuthenticationService.prototype.logout = function () {
+        this._window.localStorage.removeItem('token');
+        this.updateLoggedInStatus(false);
     };
     AuthenticationService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
@@ -447,6 +468,12 @@ var BlogService = /** @class */ (function () {
     };
     BlogService.prototype.getPayload = function () {
         return this.jwtHelper.decodeToken(window.localStorage['token']);
+    };
+    BlogService.prototype.uploadBlogPosters = function (data) {
+        return this.http.post(src_environments_environment__WEBPACK_IMPORTED_MODULE_3__["environment"].host + '/storage', data);
+    };
+    BlogService.prototype.uploadBlogPostersRequest = function (req) {
+        return this.http.request(req);
     };
     BlogService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
@@ -707,7 +734,7 @@ var RegisterComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<nz-layout>\n  <nz-sider nzCollapsible [(nzCollapsed)]=\"isCollapsed\" [nzWidth]=\"width\" [nzReverseArrow]=\"isReverseArrow\">\n    <div class=\"logo\"></div>\n    <ul nz-menu [nzTheme]=\"'dark'\" [nzMode]=\"'inline'\" [nzInlineCollapsed]=\"isCollapsed\">\n      <li nz-submenu>\n        <span title><i nz-icon type=\"user\"></i><span class=\"nav-text\">User</span></span>\n        <ul>\n          <li nz-menu-item [routerLink]=\"['/blog/auth/login']\">Acceder</li>\n          <li nz-menu-item [routerLink]=\"['/blog/auth/register']\">Registrarse</li>\n        </ul>\n      </li>\n      <li nz-submenu>\n        <span title><i nz-icon type=\"team\"></i><span class=\"nav-text\">Team</span></span>\n        <ul>\n          <li nz-menu-item>Team 1</li>\n          <li nz-menu-item>Team 2</li>\n        </ul>\n      </li>\n      <li nz-menu-item [routerLink]=\"['/blog/create']\">\n        <span><i nz-icon type=\"file\"></i><span class=\"nav-text\">New Blog</span></span>\n      </li>\n    </ul>\n  </nz-sider>\n  <nz-layout>\n    <nz-header style=\"background: #fff; padding:0;\"></nz-header>\n    <nz-content style=\"padding:0 50px;\">\n      <!-- <nz-breadcrumb style=\"margin:16px 0;\">\n        <nz-breadcrumb-item>Home</nz-breadcrumb-item>\n        <nz-breadcrumb-item>List</nz-breadcrumb-item>\n        <nz-breadcrumb-item>App</nz-breadcrumb-item>\n      </nz-breadcrumb> -->\n      <div style=\"margin:16px 0;\"></div>\n      <div style=\"background:#fff; padding: 24px; min-height: 280px;\">\n        <router-outlet></router-outlet>\n      </div>\n    </nz-content>\n    <nz-footer style=\"text-align: center;\">Ant Design ©2019 Implement By Angular</nz-footer>\n  </nz-layout>\n</nz-layout>"
+module.exports = "<nz-layout>\n  <nz-sider nzCollapsible [(nzCollapsed)]=\"isCollapsed\" [nzWidth]=\"width\" [nzReverseArrow]=\"isReverseArrow\">\n    <div class=\"logo\"></div>\n    <ul nz-menu [nzTheme]=\"'dark'\" [nzMode]=\"'inline'\" [nzInlineCollapsed]=\"isCollapsed\">\n      <li nz-submenu>\n        <span title><i nz-icon type=\"user\"></i><span class=\"nav-text\">User</span></span>\n        <ul>\n          <li *ngIf=\"!isLoggedIn\" nz-menu-item [routerLink]=\"['/blog/auth/login']\">Acceder</li>\n          <li *ngIf=\"!isLoggedIn\" nz-menu-item [routerLink]=\"['/blog/auth/register']\">Registrarse</li>\n          <li *ngIf=\"isLoggedIn\" nz-menu-item (click)=\"logout()\">Cerrar Session</li>\n        </ul>\n      </li>\n      <!-- <li nz-submenu>\n        <span title><i nz-icon type=\"team\"></i><span class=\"nav-text\">Team</span></span>\n        <ul>\n          <li nz-menu-item>Team 1</li>\n          <li nz-menu-item>Team 2</li>\n        </ul>\n      </li> -->\n      <li nz-menu-item (click)=\"reloadBlogForm()\">\n        <span><i nz-icon type=\"file\"></i><span class=\"nav-text\">New Blog</span></span>\n      </li>\n    </ul>\n  </nz-sider>\n  <nz-layout>\n    <nz-header style=\"background: #fff; padding:0;\"></nz-header>\n    <nz-content style=\"padding:0 50px;\">\n      <!-- <nz-breadcrumb style=\"margin:16px 0;\">\n        <nz-breadcrumb-item>Home</nz-breadcrumb-item>\n        <nz-breadcrumb-item>List</nz-breadcrumb-item>\n        <nz-breadcrumb-item>App</nz-breadcrumb-item>\n      </nz-breadcrumb> -->\n      <div style=\"margin:16px 0;\"></div>\n      <div style=\"background:#fff; padding: 24px; min-height: 280px;\">\n        <router-outlet></router-outlet>\n      </div>\n    </nz-content>\n    <nz-footer style=\"text-align: center;\">Ant Design ©2019 Implement By Angular</nz-footer>\n  </nz-layout>\n</nz-layout>"
 
 /***/ }),
 
@@ -734,15 +761,33 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BlogComponent", function() { return BlogComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var src_app_services_auth_authentication_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/auth/authentication.service */ "./src/app/services/auth/authentication.service.ts");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
+
+
 
 
 var BlogComponent = /** @class */ (function () {
-    function BlogComponent() {
+    function BlogComponent(authService, router) {
+        this.authService = authService;
+        this.router = router;
         this.isCollapsed = false;
         this.isReverseArrow = false;
         this.width = 200;
     }
     BlogComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.authService.authConfig.subscribe(function (authConfig) {
+            _this._authConfig = authConfig;
+            _this.isLoggedIn = _this._authConfig.isLoggedIn;
+        });
+    };
+    BlogComponent.prototype.reloadBlogForm = function () {
+        window.location.href = '/blog/create';
+    };
+    BlogComponent.prototype.logout = function () {
+        this.authService.logout();
+        this.router.navigate(['/home']);
     };
     BlogComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
@@ -750,7 +795,7 @@ var BlogComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./blog.component.html */ "./src/app/views/blog/blog.component.html"),
             styles: [__webpack_require__(/*! ./blog.component.scss */ "./src/app/views/blog/blog.component.scss")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [src_app_services_auth_authentication_service__WEBPACK_IMPORTED_MODULE_2__["AuthenticationService"], _angular_router__WEBPACK_IMPORTED_MODULE_3__["Router"]])
     ], BlogComponent);
     return BlogComponent;
 }());
@@ -766,7 +811,7 @@ var BlogComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<nz-breadcrumb style=\"margin:16px 0;\">\n  <nz-breadcrumb-item>{{ 'blog' }}</nz-breadcrumb-item>\n  <nz-breadcrumb-item>{{ 'crear' }}</nz-breadcrumb-item>\n</nz-breadcrumb>\n<div *ngIf=\"!post?.created\">\n  <form #form (submit)=\"onSubmit(form)\">\n    <h1>{{ 'Subir foto de portada' }}</h1>\n    <!-- upload poster image -->\n\n    <div class=\"clearfix\">\n      <nz-upload nzAction=\"https://jsonplaceholder.typicode.com/posts/\" nzListType=\"picture\" [(nzFileList)]=\"fileList1\" [nzCustomRequest]=\"handleUpload\">\n        <button nz-button><i nz-icon nzType=\"upload\"></i><span>Upload</span></button>\n      </nz-upload>\n    </div>\n\n    <!-- upload end -->\n    <h1>{{'Titulo'}}</h1>\n    <textarea name=\"title\" [ngModelOptions]=\"{standalone: true}\" nz-input\n      placeholder=\"Autosize height based on content lines\" ngModel nzAutosize></textarea>\n    <div style=\"margin:24px 0;\"></div>\n    <h1>{{'Contenido'}}</h1>\n    <textarea name=\"content\" [ngModelOptions]=\"{standalone: true}\" nz-input\n      placeholder=\"Autosize height with minimum and maximum number of lines\" [(ngModel)]=\"value\"\n      [nzAutosize]=\"{ minRows: 6, maxRows: 6 }\"></textarea>\n    <button type=\"submit\" nz-button [nzSize]=\"'large'\" nzType=\"primary\">{{'Crear Articulo'}}</button>\n  </form>\n</div>\n<div *ngIf=\"post?.created\" class=\"successful\">\n  <nz-alert nzType=\"success\" nzMessage=\"Articulo se creo\" [nzDescription]=\"successLink\"></nz-alert>\n  <ng-template #successLink>\n    {{'Articulo a sido publicado'}} <a [href]=\"'/posts/view/' + post?.id\">{{'Ver Articulo'}}</a>\n  </ng-template>\n</div>\n"
+module.exports = "<nz-breadcrumb style=\"margin:16px 0;\">\n  <nz-breadcrumb-item>{{ 'blog' }}</nz-breadcrumb-item>\n  <nz-breadcrumb-item>{{ 'crear' }}</nz-breadcrumb-item>\n</nz-breadcrumb>\n<div *ngIf=\"!post?.created\">\n    <h1>{{ 'Subir foto de portada' }}</h1>\n    <!-- upload poster image -->\n\n    <div class=\"clearfix\">\n        <nz-upload\n          nzListType=\"picture-card\"\n          [(nzFileList)]=\"fileList\"\n          [nzShowButton]=\"fileList.length < 3\"\n          [nzShowUploadList]=\"showUploadList\"\n          [nzPreview]=\"handlePreview\"\n          [nzCustomRequest]=\"customReq\"\n          nzAction=\"http://localhost:3030/storage\"\n        >\n          <i nz-icon nzType=\"plus\"></i>\n          <div class=\"ant-upload-text\">Upload</div>\n        </nz-upload>\n        <nz-modal\n          [nzVisible]=\"previewVisible\"\n          [nzContent]=\"modalContent\"\n          [nzFooter]=\"null\"\n          (nzOnCancel)=\"previewVisible = false\"\n        >\n          <ng-template #modalContent>\n            <img [src]=\"previewImage\" [ngStyle]=\"{ width: '100%' }\" />\n          </ng-template>\n        </nz-modal>\n      </div>\n\n    <!-- upload end -->\n  <form #form (submit)=\"onSubmit(form)\" ngNativeValidate>\n    <h1>{{'Titulo'}}</h1>\n    <textarea name=\"title\" [ngModelOptions]=\"{standalone: true}\" nz-input\n      placeholder=\"Autosize height based on content lines\" ngModel nzAutosize required></textarea>\n    <div style=\"margin:24px 0;\"></div>\n    <h1>{{'Contenido'}}</h1>\n    <textarea name=\"content\" [ngModelOptions]=\"{standalone: true}\" nz-input\n      placeholder=\"Autosize height with minimum and maximum number of lines\" [(ngModel)]=\"value\"\n      [nzAutosize]=\"{ minRows: 6, maxRows: 6 }\" required></textarea>\n    <button type=\"submit\" nz-button [nzSize]=\"'large'\" nzType=\"primary\">{{'Crear Articulo'}}</button>\n  </form>\n</div>\n<div *ngIf=\"post?.created\" class=\"successful\">\n  <nz-alert nzType=\"success\" nzMessage=\"Articulo se creo\" [nzDescription]=\"successLink\"></nz-alert>\n  <ng-template #successLink>\n    {{'Articulo a sido publicado'}} <a [href]=\"'/posts/view/' + post?.id\">{{'Ver Articulo'}}</a>\n  </ng-template>\n</div>\n"
 
 /***/ }),
 
@@ -798,6 +843,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_services_blog_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/services/blog.service */ "./src/app/services/blog.service.ts");
 /* harmony import */ var ng_zorro_antd__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ng-zorro-antd */ "./node_modules/ng-zorro-antd/fesm5/ng-zorro-antd.js");
 /* harmony import */ var src_app_services_utility_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/services/utility.service */ "./src/app/services/utility.service.ts");
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
+
 
 
 
@@ -806,21 +853,116 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var CreateComponent = /** @class */ (function () {
-    function CreateComponent(fb, formParser, blogService, notification, notify) {
+    function CreateComponent(fb, formParser, blogService, notification, notify, changeDetector) {
         var _this = this;
         this.fb = fb;
         this.formParser = formParser;
         this.blogService = blogService;
         this.notification = notification;
         this.notify = notify;
+        this.changeDetector = changeDetector;
         this.post = {
             created: false,
             id: ''
         };
         this.defaultFileList = [];
-        this.fileList1 = this.defaultFileList.slice();
-        this.handleUpload = function (item) {
-            _this.defaultFileList.push(item.file);
+        this.previewImage = '';
+        this.previewVisible = false;
+        this.showUploadList = {
+            showPreviewIcon: true,
+            showRemoveIcon: true,
+            hidePreviewIconInNonImage: true
+        };
+        this.fileList = [];
+        this.handlePreview = function (file) {
+            _this.previewImage = file.url || file.thumbUrl;
+            _this.previewVisible = true;
+        };
+        this.handleUpload = function (item) { return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](_this, void 0, void 0, function () {
+            var fileURI;
+            var _this = this;
+            return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        console.log(item);
+                        item.action = 'POST';
+                        return [4 /*yield*/, this.dataParams(item.file)];
+                    case 1:
+                        fileURI = _a.sent();
+                        item.onSuccess = function (resp) {
+                            console.log(resp);
+                            // this.fileList.push(resp);
+                        };
+                        item.onProgress({ percent: 50 });
+                        return [2 /*return*/, this.blogService.uploadBlogPosters(fileURI).subscribe(function (image) {
+                                console.log(image);
+                                _this.defaultFileList.push({
+                                    uid: image.bytes,
+                                    name: image.original_filename,
+                                    status: 'done',
+                                    url: image.url,
+                                    thumbUrl: image.url,
+                                });
+                                item.data = image;
+                                item.file = image;
+                                _this.previewImage = image.url;
+                                console.log(_this.fileList);
+                                _this.fileList = _this.defaultFileList.slice();
+                                _this.changeDetector.detectChanges();
+                            })];
+                }
+            });
+        }); };
+        this.customReq = function (item) { return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](_this, void 0, void 0, function () {
+            var fileURI, req;
+            return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        console.log(this.fileList.slice());
+                        return [4 /*yield*/, this.dataParams(item.file)];
+                    case 1:
+                        fileURI = _a.sent();
+                        req = new _angular_common_http__WEBPACK_IMPORTED_MODULE_7__["HttpRequest"]('POST', item.action, fileURI, {
+                            reportProgress: true,
+                            withCredentials: true
+                        });
+                        return [2 /*return*/, this.blogService.uploadBlogPostersRequest(req).subscribe(function (event) {
+                                if (event.type === _angular_common_http__WEBPACK_IMPORTED_MODULE_7__["HttpEventType"].UploadProgress) {
+                                    if (event.total > 0) {
+                                        // tslint:disable-next-line:no-any
+                                        event.percent = (event.loaded / event.total) * 100;
+                                    }
+                                    item.onProgress(event, item.file);
+                                }
+                                else if (event instanceof _angular_common_http__WEBPACK_IMPORTED_MODULE_7__["HttpResponse"]) {
+                                    item.onSuccess(event.body, item.file, event);
+                                }
+                            }, function (err) {
+                                item.onError(err, item.file);
+                            })];
+                }
+            });
+        }); };
+        this.dataParams = function (file) { return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](_this, void 0, void 0, function () {
+            var reader;
+            return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        return [4 /*yield*/, new Promise(function (resolve, reject) {
+                                reader.onload = function () {
+                                    resolve({ uri: reader.result });
+                                };
+                            })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        }); };
+        this.dataHeaders = function () {
+            return {
+                'Content-Type': 'multipart/form-data'
+            };
         };
     }
     CreateComponent.prototype.ngOnInit = function () {
@@ -830,31 +972,20 @@ var CreateComponent = /** @class */ (function () {
     CreateComponent.prototype.onSubmit = function (form) {
         var _this = this;
         var formValues = this.formParser.parse(form);
-        formValues.avatar = this.chosenFile;
-        for (var values in formValues) {
-            if (formValues[values] !== undefined) {
-                return;
-            }
-            ;
-        }
-        this.blogService.createPost(formValues).toPromise().then(function (post) {
+        // format url for mongoose schema
+        formValues.posters = this.fileList.slice().map(function (fileInfo, idx, arr) {
+            return { url: fileInfo.response.url };
+        });
+        this.blogService.createPost(formValues).subscribe(function (post) {
             console.log(post);
             _this.notify.createNotification('success', 'Exitoso', 'El articulo se creo con exito.');
             _this.post.created = true;
             _this.post.id = post._id;
-            _this.successLink.createEmbeddedView({ $implicit: 'value' });
-        }).catch(function (err) {
-            _this.notify.createNotification('error', 'Error', 'Algo salio mal, contacta al administrador si sigue sin funcionar. 510-283-8390');
+            // this.successLink.createEmbeddedView({ $implicit: 'value' });
+        }, function (err) {
+            _this.notify.createNotification('error', 'Error', "Algo salio mal, contacta al administrador si sigue sin funcionar. 510-283-8390 \n " + err.message);
         });
         console.log(formValues);
-    };
-    CreateComponent.prototype.fileChange = function ($event) {
-        var _this = this;
-        var reader = new FileReader();
-        reader.readAsDataURL($event.target.files[0]);
-        reader.onload = function () {
-            _this.chosenFile = reader.result;
-        };
     };
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('successLink'),
@@ -867,7 +998,7 @@ var CreateComponent = /** @class */ (function () {
             styles: [__webpack_require__(/*! ./create.component.scss */ "./src/app/views/blog/create/create.component.scss")]
         }),
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormBuilder"], src_app_classes_form_parser__WEBPACK_IMPORTED_MODULE_3__["FormParser"], src_app_services_blog_service__WEBPACK_IMPORTED_MODULE_4__["BlogService"],
-            ng_zorro_antd__WEBPACK_IMPORTED_MODULE_5__["NzNotificationService"], src_app_services_utility_service__WEBPACK_IMPORTED_MODULE_6__["UtilityService"]])
+            ng_zorro_antd__WEBPACK_IMPORTED_MODULE_5__["NzNotificationService"], src_app_services_utility_service__WEBPACK_IMPORTED_MODULE_6__["UtilityService"], _angular_core__WEBPACK_IMPORTED_MODULE_1__["ChangeDetectorRef"]])
     ], CreateComponent);
     return CreateComponent;
 }());

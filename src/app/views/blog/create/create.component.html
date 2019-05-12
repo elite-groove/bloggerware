@@ -3,25 +3,44 @@
   <nz-breadcrumb-item>{{ 'crear' }}</nz-breadcrumb-item>
 </nz-breadcrumb>
 <div *ngIf="!post?.created">
-  <form #form (submit)="onSubmit(form)">
     <h1>{{ 'Subir foto de portada' }}</h1>
     <!-- upload poster image -->
 
     <div class="clearfix">
-      <nz-upload nzAction="https://jsonplaceholder.typicode.com/posts/" nzListType="picture" [(nzFileList)]="fileList1" [nzCustomRequest]="handleUpload">
-        <button nz-button><i nz-icon nzType="upload"></i><span>Upload</span></button>
-      </nz-upload>
-    </div>
+        <nz-upload
+          nzListType="picture-card"
+          [(nzFileList)]="fileList"
+          [nzShowButton]="fileList.length < 3"
+          [nzShowUploadList]="showUploadList"
+          [nzPreview]="handlePreview"
+          [nzCustomRequest]="customReq"
+          nzAction="http://localhost:3030/storage"
+        >
+          <i nz-icon nzType="plus"></i>
+          <div class="ant-upload-text">Upload</div>
+        </nz-upload>
+        <nz-modal
+          [nzVisible]="previewVisible"
+          [nzContent]="modalContent"
+          [nzFooter]="null"
+          (nzOnCancel)="previewVisible = false"
+        >
+          <ng-template #modalContent>
+            <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+          </ng-template>
+        </nz-modal>
+      </div>
 
     <!-- upload end -->
+  <form #form (submit)="onSubmit(form)" ngNativeValidate>
     <h1>{{'Titulo'}}</h1>
     <textarea name="title" [ngModelOptions]="{standalone: true}" nz-input
-      placeholder="Autosize height based on content lines" ngModel nzAutosize></textarea>
+      placeholder="Autosize height based on content lines" ngModel nzAutosize required></textarea>
     <div style="margin:24px 0;"></div>
     <h1>{{'Contenido'}}</h1>
     <textarea name="content" [ngModelOptions]="{standalone: true}" nz-input
       placeholder="Autosize height with minimum and maximum number of lines" [(ngModel)]="value"
-      [nzAutosize]="{ minRows: 6, maxRows: 6 }"></textarea>
+      [nzAutosize]="{ minRows: 6, maxRows: 6 }" required></textarea>
     <button type="submit" nz-button [nzSize]="'large'" nzType="primary">{{'Crear Articulo'}}</button>
   </form>
 </div>

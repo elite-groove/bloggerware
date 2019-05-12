@@ -8,17 +8,13 @@
   },
   "mongodb": "mongodb://localhost:27017/blogger",
   "authentication": {
-    "secret": "335f1899c2a2b103b5abd03276ac7a8d009bf68c2875574fd51739c08f223c2cbe38259bececa1123c37410cccdec71ec4d5e6a275003f552472a218df2f8a0ec0e80c5da22bc7a28f05db898f384f9040ef0f70a0648ee593438fa2486f06d1c9e2bd28b1be9c03912aec903a62b387c7e945b98fcfce09b082aa64661124fba1ec2c9456593a21f135cf043390c15e6cc520fe98b816f29163b27c244ac02a37acdff48b6b76f39affd9c1fd3decd680e004a95a93fc5b57f11c86da7acd52e279e62ed1af8b8cf9539b099deb8c11d2a78cf0294ec1806153570366cd701e14e0f742820441e3bace9e7da5c66e5a785916a2b110eb3870b51de08298918a",
+    "secret": "d1dfac57fd6ecc64c389e0d7677c51b667c6857925ce997a333c999a69d1eb0ecdd7c031789ae8754010c8697c411e2d5cf2950c1b1b2d931ecf02db2aef5442713bc5552d3a122f6044e51b8f07c1f5db7caf9a8c54445f689bb9403ef76684d37664242a8c0ebe812049d0a838eaa2e906ff395cd2bb4ed3db8d6cddf9bd8da4d071d64dd6617713d57978900a191d0f918410d3476275f8a29a02e5c4e848e610f2a66478085887eae59a0ff6aeae0b68bf47e23f4cabbfc4b4df06a1fa421d16f5d640fbc173d4d4954d4a804c4610e42de2df2daed47de77830596dd1a9ff68537811040196eebe25c0b98e9b2c92cf7a5e662233669820c4284b20f6d8",
     "strategies": [
       "jwt",
       "local"
     ],
-    "google": {
-      "clientID": "GOOGLE_CLIENT_ID",
-      "clientSecret": "GOOGLE_SECRET"
-    },
     "path": "/authentication",
-    "service": "google-auth",
+    "service": "users",
     "jwt": {
       "header": {
         "typ": "access"

@@ -19,4 +19,11 @@ export class BlogService {
   getPayload(): Payload {
     return this.jwtHelper.decodeToken(window.localStorage['token']);
   }
+
+  uploadBlogPosters(data) {
+    return this.http.post(environment.host + '/storage', data);
+  }
+  uploadBlogPostersRequest(req) {
+    return this.http.request(req);
+  }
 }

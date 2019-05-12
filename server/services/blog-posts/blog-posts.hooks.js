@@ -17,7 +17,7 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [handlePostCreation()],
+    create: [],
     update: [],
     patch: [],
     remove: []

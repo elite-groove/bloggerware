@@ -2,12 +2,14 @@ const { authenticate } = require('@feathersjs/authentication').hooks;
 
 const handleCloudUpload = require('../../hooks/handle-cloud-upload');
 
+const handleFileUpload = require('../../hooks/handle-file-upload');
+
 module.exports = {
   before: {
     all: [ authenticate('jwt') ],
     find: [],
     get: [],
-    create: [],
+    create: [handleFileUpload()],
     update: [],
     patch: [],
     remove: []
