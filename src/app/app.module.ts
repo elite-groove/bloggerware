@@ -5,9 +5,10 @@ import { NgModule } from '@angular/core';
 import { IconDefinition } from '@ant-design/icons-angular';
 import { NgZorroAntdModule, NZ_ICONS } from 'ng-zorro-antd';
 import { ReactiveFormsModule } from '@angular/forms';
+import { JwtModule } from '@auth0/angular-jwt';
 
 // Import what you need. RECOMMENDED. ✔️
-import { AccountBookFill, AlertFill, AlertOutline, TeamOutline, UserOutline, LockOutline } from '@ant-design/icons-angular/icons';
+import { AccountBookFill, AlertFill, TeamOutline, UserOutline, LockOutline } from '@ant-design/icons-angular/icons';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -21,6 +22,8 @@ import { FormParser } from './classes/form-parser';
 import { HttpClientModule } from '@angular/common/http';
 import { RegisterComponent } from './views/auth/register/register.component';
 import { LoginComponent } from './views/auth/login/login.component';
+import { CallbackComponent } from './views/auth/callback/callback.component';
+import { TokenGetter } from './classes/token-getter';
 
 
 const icons: IconDefinition[] = [ AccountBookFill, LockOutline, AlertFill, TeamOutline, UserOutline ];
@@ -33,7 +36,8 @@ const icons: IconDefinition[] = [ AccountBookFill, LockOutline, AlertFill, TeamO
     HomeComponent,
     BlogComponent,
     RegisterComponent,
-    LoginComponent
+    LoginComponent,
+    CallbackComponent
   ],
   imports: [
     BrowserModule,
@@ -42,7 +46,13 @@ const icons: IconDefinition[] = [ AccountBookFill, LockOutline, AlertFill, TeamO
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: new TokenGetter().value,
+        whitelistedDomains: ['localhost:3030'],
+      }
+    })
   ],
   providers: [
     { provide: NZ_ICONS, useValue: icons },

@@ -6,13 +6,15 @@ import { CreateComponent } from './views/blog/create/create.component';
 import { BlogComponent } from './views/blog/blog.component';
 import { LoginComponent } from './views/auth/login/login.component';
 import { RegisterComponent } from './views/auth/register/register.component';
+import { CallbackComponent } from './views/auth/callback/callback.component';
+import { AuthGuard } from './guards/authentication/auth.guard';
 
 const routes: Routes = [
   {path: '', redirectTo: 'home', pathMatch: 'full'},
   {path: 'home', component: HomeComponent},
   {path: 'posts', children: [
     {path: '', redirectTo: 'view', pathMatch: 'full'},
-    {path: 'view', component: ViewComponent}
+    {path: 'view/:id', component: ViewComponent}
   ]},
   {path: 'blog', component: BlogComponent, children: [
     {path: '', redirectTo: 'create', pathMatch: 'full'},    
@@ -20,9 +22,10 @@ const routes: Routes = [
     {path: 'auth', children: [
       {path: '', redirectTo: 'login', pathMatch: 'full'},    
       {path: 'login', component: LoginComponent},
-      {path: 'register', component: RegisterComponent},
+      {path: 'register', component: RegisterComponent}
     ]},
-  ]}
+  ]},
+  {path: 'callback', component: CallbackComponent, canActivate: [AuthGuard]}
 ];
 
 @NgModule({

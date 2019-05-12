@@ -2,7 +2,7 @@
   <nz-breadcrumb-item>{{ 'blog' }}</nz-breadcrumb-item>
   <nz-breadcrumb-item>{{ 'crear' }}</nz-breadcrumb-item>
 </nz-breadcrumb>
-<div>
+<div *ngIf="!post?.created">
   <form #form (submit)="onSubmit(form)">
     <h1>{{'Titulo'}}</h1>
     <textarea name="title" [ngModelOptions]="{standalone: true}" nz-input placeholder="Autosize height based on content lines"
@@ -11,7 +11,17 @@
     <h1>{{'Contenido'}}</h1>
     <textarea name="content" [ngModelOptions]="{standalone: true}" nz-input
       placeholder="Autosize height with minimum and maximum number of lines" [(ngModel)]="value"
-      [nzAutosize]="{ minRows: 2, maxRows: 6 }"></textarea>
+      [nzAutosize]="{ minRows: 6, maxRows: 6 }"></textarea>
       <button type="submit" nz-button [nzSize]="'large'" nzType="primary">{{'Crear Articulo'}}</button>
   </form>
+</div>
+<div *ngIf="post?.created" class="successful">
+  <nz-alert
+      nzType="success"
+      nzMessage="Articulo se creo"
+      [nzDescription]="successLink"
+    ></nz-alert>
+    <ng-template #successLink>
+        {{'Articulo a sido publicado'}} <a [href]="'/posts/view/' + post?.id">{{'Ver Articulo'}}</a>
+    </ng-template>
 </div>
