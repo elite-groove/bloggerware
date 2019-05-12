@@ -407,10 +407,21 @@ var AuthenticationService = /** @class */ (function () {
         this.checkLoggedIn();
     }
     AuthenticationService.prototype.saveToken = function (token) {
-        this._window.localStorage['token'] = token;
+        this._window.localStorage['token'] = token.accessToken;
+        this.updateLoggedInStatus(true);
+    };
+    AuthenticationService.prototype.saveUserId = function (user) {
+        this._window.localStorage['uid'] = user._id;
+    };
+    AuthenticationService.prototype.getUserId = function () {
+        return this._window.localStorage['uid'];
     };
     AuthenticationService.prototype.googleLogin = function () {
         return this._window.location.href = (src_environments_environment__WEBPACK_IMPORTED_MODULE_3__["environment"].host + '/auth/google/callback');
+    };
+    AuthenticationService.prototype.localRegister = function (user) {
+        console.log(user);
+        return this.http.post(src_environments_environment__WEBPACK_IMPORTED_MODULE_3__["environment"].host + '/users', user);
     };
     AuthenticationService.prototype.checkLoggedIn = function () {
         var isLoggedIn = this._window.localStorage['token'] ? true : false;
@@ -422,6 +433,7 @@ var AuthenticationService = /** @class */ (function () {
     };
     AuthenticationService.prototype.logout = function () {
         this._window.localStorage.removeItem('token');
+        this._window.localStorage.removeItem('uid');
         this.updateLoggedInStatus(false);
     };
     AuthenticationService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
@@ -451,7 +463,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
 /* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/environments/environment */ "./src/environments/environment.ts");
-/* harmony import */ var _auth0_angular_jwt__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @auth0/angular-jwt */ "./node_modules/@auth0/angular-jwt/index.js");
+/* harmony import */ var _auth0_angular_jwt_src_jwthelper_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @auth0/angular-jwt/src/jwthelper.service */ "./node_modules/@auth0/angular-jwt/src/jwthelper.service.js");
 
 
 
@@ -463,7 +475,8 @@ var BlogService = /** @class */ (function () {
         this.jwtHelper = jwtHelper;
     }
     BlogService.prototype.createPost = function (blogValues) {
-        blogValues.userId = this.getPayload().userId;
+        console.log(this.getPayload());
+        blogValues.userId = this.getPayload().userId || this.getPayload()._id;
         return this.http.post(src_environments_environment__WEBPACK_IMPORTED_MODULE_3__["environment"].host + '/blog-posts', blogValues);
     };
     BlogService.prototype.getPayload = function () {
@@ -479,7 +492,7 @@ var BlogService = /** @class */ (function () {
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
             providedIn: 'root'
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"], _auth0_angular_jwt__WEBPACK_IMPORTED_MODULE_4__["JwtHelperService"]])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"], _auth0_angular_jwt_src_jwthelper_service__WEBPACK_IMPORTED_MODULE_4__["JwtHelperService"]])
     ], BlogService);
     return BlogService;
 }());
@@ -678,7 +691,7 @@ var LoginComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<p>\n  register works!\n</p>\n"
+module.exports = "<form nz-form [formGroup]=\"validateForm\" #form class=\"login-form\" (ngSubmit)=\"submitForm(form)\">\n    <nz-form-item>\n      <nz-form-control>\n        <nz-input-group [nzPrefix]=\"prefixUser\">\n          <input type=\"email\" nz-input formControlName=\"email\" placeholder=\"Email\" name=\"email\"/>\n        </nz-input-group>\n        <nz-form-explain *ngIf=\"validateForm.get('email')?.dirty && validateForm.get('email')?.errors\"\n          >Email</nz-form-explain\n        >\n      </nz-form-control>\n    </nz-form-item>\n    <nz-form-item>\n      <nz-form-control>\n        <nz-input-group [nzPrefix]=\"prefixLock\">\n          <input type=\"password\" nz-input formControlName=\"password\" placeholder=\"Password\" name=\"password\"/>\n        </nz-input-group>\n        <nz-form-explain *ngIf=\"validateForm.get('password')?.dirty && validateForm.get('password')?.errors\"\n          >Clave</nz-form-explain\n        >\n      </nz-form-control>\n    </nz-form-item>\n    <nz-form-item>\n      <nz-form-control>\n        <label nz-checkbox formControlName=\"remember\">\n          <span>Remember me</span>\n        </label>\n        <!-- <a class=\"login-form-forgot\" class=\"login-form-forgot\">Forgot password</a> -->\n        <button nz-button class=\"login-form-button\" [nzType]=\"'primary'\">Log in</button>\n        <!-- Or -->\n        <!-- <a href=\"\">register now!</a> -->\n      </nz-form-control>\n    </nz-form-item>\n  </form>\n  <ng-template #prefixUser><i nz-icon type=\"user\"></i></ng-template>\n  <ng-template #prefixLock><i nz-icon type=\"lock\"></i></ng-template>"
 
 /***/ }),
 
@@ -689,7 +702,7 @@ module.exports = "<p>\n  register works!\n</p>\n"
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL3ZpZXdzL2F1dGgvcmVnaXN0ZXIvcmVnaXN0ZXIuY29tcG9uZW50LnNjc3MifQ== */"
+module.exports = ":host {\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center; }\n  :host ::ng-deep .login-form {\n    width: 34%;\n    margin: 60px 0; }\n  :host ::ng-deep .login-form-forgot {\n    float: right; }\n  :host ::ng-deep .login-form-button {\n    width: 100%; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9sdWlzY29uc3RhbnRlL0Rlc2t0b3AvbGNvbnN0LmpzL2Jsb2cvc3JjL2FwcC92aWV3cy9hdXRoL3JlZ2lzdGVyL3JlZ2lzdGVyLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksYUFBYTtFQUNiLG1CQUFtQjtFQUNuQixtQkFBbUI7RUFDbkIsdUJBQXVCLEVBQUE7RUFKM0I7SUFRUSxVQUFVO0lBQ1YsY0FBYyxFQUFBO0VBVHRCO0lBYVEsWUFBWSxFQUFBO0VBYnBCO0lBaUJRLFdBQVcsRUFBQSIsImZpbGUiOiJzcmMvYXBwL3ZpZXdzL2F1dGgvcmVnaXN0ZXIvcmVnaXN0ZXIuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyI6aG9zdCB7XG4gICAgZGlzcGxheTogZmxleDtcbiAgICBmbGV4LWRpcmVjdGlvbjogcm93O1xuICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gIFxuICAgIDo6bmctZGVlcCB7XG4gICAgICAubG9naW4tZm9ybSB7XG4gICAgICAgIHdpZHRoOiAzNCU7XG4gICAgICAgIG1hcmdpbjogNjBweCAwO1xuICAgICAgfVxuICBcbiAgICAgIC5sb2dpbi1mb3JtLWZvcmdvdCB7XG4gICAgICAgIGZsb2F0OiByaWdodDtcbiAgICAgIH1cbiAgXG4gICAgICAubG9naW4tZm9ybS1idXR0b24ge1xuICAgICAgICB3aWR0aDogMTAwJTtcbiAgICAgIH1cbiAgICB9XG4gIH0iXX0= */"
 
 /***/ }),
 
@@ -705,12 +718,52 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RegisterComponent", function() { return RegisterComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
+/* harmony import */ var src_app_services_auth_authentication_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/services/auth/authentication.service */ "./src/app/services/auth/authentication.service.ts");
+/* harmony import */ var src_app_classes_form_parser__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/classes/form-parser */ "./src/app/classes/form-parser.ts");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
+/* harmony import */ var src_app_services_utility_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/services/utility.service */ "./src/app/services/utility.service.ts");
+
+
+
+
+
 
 
 var RegisterComponent = /** @class */ (function () {
-    function RegisterComponent() {
+    function RegisterComponent(fb, authService, formParser, router, utilityService) {
+        this.fb = fb;
+        this.authService = authService;
+        this.formParser = formParser;
+        this.router = router;
+        this.utilityService = utilityService;
     }
     RegisterComponent.prototype.ngOnInit = function () {
+        this.validateForm = this.fb.group({
+            email: [null, [_angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required]],
+            password: [null, [_angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required]],
+            remember: [true]
+        });
+    };
+    RegisterComponent.prototype.submitForm = function (form) {
+        var _this = this;
+        var formValues = this.formParser.parse(form);
+        formValues.strategy = 'local';
+        for (var i in this.validateForm.controls) {
+            this.validateForm.controls[i].markAsDirty();
+            this.validateForm.controls[i].updateValueAndValidity();
+        }
+        console.log(formValues);
+        this.authService.localRegister(formValues).subscribe(function (user) {
+            if (user._id) {
+                _this.authService.saveToken(user.token);
+                _this.authService.saveUserId(user);
+                _this.utilityService.createNotification('success', 'Exitoso', "Tu cuenta se creo con exito.");
+                _this.router.navigate(['/blog/create']);
+            }
+        }, function (err) {
+            _this.utilityService.createNotification('error', 'Error', "Algo salio mal.\n " + err.message);
+        });
     };
     RegisterComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
@@ -718,7 +771,8 @@ var RegisterComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./register.component.html */ "./src/app/views/auth/register/register.component.html"),
             styles: [__webpack_require__(/*! ./register.component.scss */ "./src/app/views/auth/register/register.component.scss")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormBuilder"], src_app_services_auth_authentication_service__WEBPACK_IMPORTED_MODULE_3__["AuthenticationService"], src_app_classes_form_parser__WEBPACK_IMPORTED_MODULE_4__["FormParser"],
+            _angular_router__WEBPACK_IMPORTED_MODULE_5__["Router"], src_app_services_utility_service__WEBPACK_IMPORTED_MODULE_6__["UtilityService"]])
     ], RegisterComponent);
     return RegisterComponent;
 }());
@@ -811,7 +865,7 @@ var BlogComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<nz-breadcrumb style=\"margin:16px 0;\">\n  <nz-breadcrumb-item>{{ 'blog' }}</nz-breadcrumb-item>\n  <nz-breadcrumb-item>{{ 'crear' }}</nz-breadcrumb-item>\n</nz-breadcrumb>\n<div *ngIf=\"!post?.created\">\n    <h1>{{ 'Subir foto de portada' }}</h1>\n    <!-- upload poster image -->\n\n    <div class=\"clearfix\">\n        <nz-upload\n          nzListType=\"picture-card\"\n          [(nzFileList)]=\"fileList\"\n          [nzShowButton]=\"fileList.length < 3\"\n          [nzShowUploadList]=\"showUploadList\"\n          [nzPreview]=\"handlePreview\"\n          [nzCustomRequest]=\"customReq\"\n          nzAction=\"http://localhost:3030/storage\"\n        >\n          <i nz-icon nzType=\"plus\"></i>\n          <div class=\"ant-upload-text\">Upload</div>\n        </nz-upload>\n        <nz-modal\n          [nzVisible]=\"previewVisible\"\n          [nzContent]=\"modalContent\"\n          [nzFooter]=\"null\"\n          (nzOnCancel)=\"previewVisible = false\"\n        >\n          <ng-template #modalContent>\n            <img [src]=\"previewImage\" [ngStyle]=\"{ width: '100%' }\" />\n          </ng-template>\n        </nz-modal>\n      </div>\n\n    <!-- upload end -->\n  <form #form (submit)=\"onSubmit(form)\" ngNativeValidate>\n    <h1>{{'Titulo'}}</h1>\n    <textarea name=\"title\" [ngModelOptions]=\"{standalone: true}\" nz-input\n      placeholder=\"Autosize height based on content lines\" ngModel nzAutosize required></textarea>\n    <div style=\"margin:24px 0;\"></div>\n    <h1>{{'Contenido'}}</h1>\n    <textarea name=\"content\" [ngModelOptions]=\"{standalone: true}\" nz-input\n      placeholder=\"Autosize height with minimum and maximum number of lines\" [(ngModel)]=\"value\"\n      [nzAutosize]=\"{ minRows: 6, maxRows: 6 }\" required></textarea>\n    <button type=\"submit\" nz-button [nzSize]=\"'large'\" nzType=\"primary\">{{'Crear Articulo'}}</button>\n  </form>\n</div>\n<div *ngIf=\"post?.created\" class=\"successful\">\n  <nz-alert nzType=\"success\" nzMessage=\"Articulo se creo\" [nzDescription]=\"successLink\"></nz-alert>\n  <ng-template #successLink>\n    {{'Articulo a sido publicado'}} <a [href]=\"'/posts/view/' + post?.id\">{{'Ver Articulo'}}</a>\n  </ng-template>\n</div>\n"
+module.exports = "<nz-breadcrumb style=\"margin:16px 0;\">\n  <nz-breadcrumb-item>{{ 'blog' }}</nz-breadcrumb-item>\n  <nz-breadcrumb-item>{{ 'crear' }}</nz-breadcrumb-item>\n</nz-breadcrumb>\n<div *ngIf=\"!post?.created\">\n    <h1>{{ 'Subir foto de portada' }}</h1>\n    <!-- upload poster image -->\n\n    <div class=\"clearfix\">\n        <nz-upload\n          nzListType=\"picture-card\"\n          [(nzFileList)]=\"fileList\"\n          [nzShowButton]=\"fileList.length < 3\"\n          [nzShowUploadList]=\"showUploadList\"\n          [nzPreview]=\"handlePreview\"\n          [nzCustomRequest]=\"customReq\"\n          nzAction=\"http://localhost:3030/storage\"\n        >\n          <i nz-icon nzType=\"plus\"></i>\n          <div class=\"ant-upload-text\">Upload</div>\n        </nz-upload>\n        <nz-modal\n          [nzVisible]=\"previewVisible\"\n          [nzContent]=\"modalContent\"\n          [nzFooter]=\"null\"\n          (nzOnCancel)=\"previewVisible = false\"\n        >\n          <ng-template #modalContent>\n            <img [src]=\"previewImage\" [ngStyle]=\"{ width: '100%' }\" />\n          </ng-template>\n        </nz-modal>\n      </div>\n\n    <!-- upload end -->\n  <form #form (submit)=\"onSubmit($event, form)\" ngNativeValidate>\n    <h1>{{'Titulo'}}</h1>\n    <textarea name=\"title\" [ngModelOptions]=\"{standalone: true}\" nz-input\n      placeholder=\"Autosize height based on content lines\" ngModel nzAutosize required></textarea>\n    <div style=\"margin:24px 0;\"></div>\n    <h1>{{'Contenido'}}</h1>\n    <textarea name=\"content\" [ngModelOptions]=\"{standalone: true}\" nz-input\n      placeholder=\"Autosize height with minimum and maximum number of lines\" [(ngModel)]=\"value\"\n      [nzAutosize]=\"{ minRows: 6, maxRows: 6 }\" required></textarea>\n    <button type=\"submit\" nz-button [nzSize]=\"'large'\" nzType=\"primary\">{{'Crear Articulo'}}</button>\n  </form>\n</div>\n<div *ngIf=\"post?.created\" class=\"successful\">\n  <nz-alert nzType=\"success\" nzMessage=\"Articulo se creo\" [nzDescription]=\"successLink\"></nz-alert>\n  <ng-template #successLink>\n    {{'Articulo a sido publicado'}} <a [href]=\"'/posts/view/' + post?.id\">{{'Ver Articulo'}}</a>\n  </ng-template>\n</div>\n"
 
 /***/ }),
 
@@ -969,8 +1023,9 @@ var CreateComponent = /** @class */ (function () {
     };
     CreateComponent.prototype.ngAfterViewChecked = function () {
     };
-    CreateComponent.prototype.onSubmit = function (form) {
+    CreateComponent.prototype.onSubmit = function ($event, form) {
         var _this = this;
+        $event.preventDefault();
         var formValues = this.formParser.parse(form);
         // format url for mongoose schema
         formValues.posters = this.fileList.slice().map(function (fileInfo, idx, arr) {
@@ -981,7 +1036,6 @@ var CreateComponent = /** @class */ (function () {
             _this.notify.createNotification('success', 'Exitoso', 'El articulo se creo con exito.');
             _this.post.created = true;
             _this.post.id = post._id;
-            // this.successLink.createEmbeddedView({ $implicit: 'value' });
         }, function (err) {
             _this.notify.createNotification('error', 'Error', "Algo salio mal, contacta al administrador si sigue sin funcionar. 510-283-8390 \n " + err.message);
         });

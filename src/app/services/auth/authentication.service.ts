@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Token } from 'src/app/interfaces/token';
 import { BehaviorSubject } from 'rxjs';
+import { LocalUser } from 'src/app/interfaces/local-user';
 
 @Injectable({
   providedIn: 'root'
@@ -26,11 +27,25 @@ export class AuthenticationService {
   }
 
   saveToken(token: Token) {
-    this._window.localStorage['token'] = token;
+    this._window.localStorage['token'] = token.accessToken;
+    this.updateLoggedInStatus(true);
+  }
+
+  saveUserId(user: LocalUser) {
+    this._window.localStorage['uid'] = user._id;
+  }
+
+  getUserId() {
+    return this._window.localStorage['uid'];
   }
 
   googleLogin() {
     return this._window.location.href = (environment.host + '/auth/google/callback');
+  }
+
+  localRegister(user) {
+    console.log(user);
+    return this.http.post(environment.host + '/users', user);
   }
 
   checkLoggedIn() {
@@ -45,6 +60,7 @@ export class AuthenticationService {
 
   logout() {
     this._window.localStorage.removeItem('token');
+    this._window.localStorage.removeItem('uid');
     this.updateLoggedInStatus(false);
   }
 }

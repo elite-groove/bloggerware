@@ -32,7 +32,7 @@
       </div>
 
     <!-- upload end -->
-  <form #form (submit)="onSubmit(form)" ngNativeValidate>
+  <form #form (submit)="onSubmit($event, form)" ngNativeValidate>
     <h1>{{'Titulo'}}</h1>
     <textarea name="title" [ngModelOptions]="{standalone: true}" nz-input
       placeholder="Autosize height based on content lines" ngModel nzAutosize required></textarea>

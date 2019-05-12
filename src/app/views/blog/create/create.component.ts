@@ -6,7 +6,7 @@ import { NzNotificationService, UploadFile, UploadXHRArgs } from 'ng-zorro-antd'
 import { Post } from 'src/app/interfaces/post';
 import { Subscription } from 'rxjs';
 import { UtilityService } from 'src/app/services/utility.service';
-import { BlogImage } from 'server/interfaces/blog-image';
+import { BlogImage } from 'src/app/interfaces/blog-image';
 import { HttpRequest, HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
 
 @Component({
@@ -42,7 +42,8 @@ export class CreateComponent implements OnInit, AfterViewChecked {
   ngAfterViewChecked(): void {
   }
 
-  onSubmit(form) {
+  onSubmit($event, form) {
+    $event.preventDefault();
     const formValues: any = this.formParser.parse(form);
 
     // format url for mongoose schema
@@ -56,7 +57,6 @@ export class CreateComponent implements OnInit, AfterViewChecked {
         this.notify.createNotification('success', 'Exitoso', 'El articulo se creo con exito.');
         this.post.created = true;
         this.post.id = post._id;
-        // this.successLink.createEmbeddedView({ $implicit: 'value' });
       }
     , err => {
         this.notify.createNotification('error', 'Error', `Algo salio mal, contacta al administrador si sigue sin funcionar. 510-283-8390 \n ${err.message}`);

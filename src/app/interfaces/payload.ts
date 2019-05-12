@@ -6,4 +6,5 @@ export interface Payload {
     iss:    string;
     sub:    string;
     jti:    string;
+    _id: string;
 }
