@@ -1,0 +1,17 @@
+<nz-breadcrumb style="margin:16px 0;">
+  <nz-breadcrumb-item>{{ 'blog' }}</nz-breadcrumb-item>
+  <nz-breadcrumb-item>{{ 'crear' }}</nz-breadcrumb-item>
+</nz-breadcrumb>
+<div>
+  <form #form (submit)="onSubmit(form)">
+    <h1>{{'Titulo'}}</h1>
+    <textarea name="title" [ngModelOptions]="{standalone: true}" nz-input placeholder="Autosize height based on content lines"
+      ngModel nzAutosize></textarea>
+    <div style="margin:24px 0;"></div>
+    <h1>{{'Contenido'}}</h1>
+    <textarea name="content" [ngModelOptions]="{standalone: true}" nz-input
+      placeholder="Autosize height with minimum and maximum number of lines" [(ngModel)]="value"
+      [nzAutosize]="{ minRows: 2, maxRows: 6 }"></textarea>
+      <button type="submit" nz-button [nzSize]="'large'" nzType="primary">{{'Crear Articulo'}}</button>
+  </form>
+</div>
