@@ -24,8 +24,8 @@ const routes: Routes = [
     {path: 'create', component: CreateComponent},
     {path: 'auth', children: [
       {path: '', redirectTo: 'login', pathMatch: 'full'},    
-      {path: 'login', component: LoginComponent},
-      {path: 'register', component: RegisterComponent}
+      {path: 'login', component: LoginComponent, canActivate: [AuthGuard]},
+      {path: 'register', component: RegisterComponent, canActivate: [AuthGuard]}
     ]},
   ]},
   {path: 'callback', component: CallbackComponent, canActivate: [AuthGuard]}

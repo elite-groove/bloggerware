@@ -1,29 +1,33 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, CanActivate, ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Injectable, OnDestroy } from '@angular/core';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, CanActivate, ActivatedRoute, Router } from '@angular/router';
+import { Observable, Subscription } from 'rxjs';
+import { AuthenticationService } from 'src/app/services/auth/authentication.service';
+import { AuthConfig } from 'src/app/interfaces/auth-config';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard implements CanActivate {
+export class AuthGuard implements CanActivate, OnDestroy {
   _window: Window = window;
+  subscriptions = new Subscription();
+  authConfig: AuthConfig;
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute, private authService: AuthenticationService, private router: Router) { }
 
   canActivate(): boolean {
-    // const isAuthorized: Promise<boolean> = new Promise((resolve, reject) => {
-      this.route.queryParams.subscribe(
-        params => {
-          console.log(params);
-          if (params['token']) {
-            if(!this._window.localStorage['token']) {
-              this._window.localStorage['token'] = params['token'];
-            }
-          }
-        }
-      );
-    // });
+    this.subscriptions.add(this.authService.authConfig.subscribe(
+      (authConfig: AuthConfig) => {
+         this.authConfig = authConfig;
+         if(this.authConfig.isLoggedIn) {
+           this.router.navigate(['/blog/create']);
+         }
+       }
+     ));
 
     return true;
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }

@@ -35,6 +35,10 @@ app.use(favicon(path.join(app.get('public'), 'favicon.ico')));
 // Host the public folder
 app.use('/', express.static(app.get('public')));
 
+app.use('/store', (err, req, res, next) => {
+    console.log(req.body, req);
+    res.json(req.body);
+});
 
 // Set up Plugins and providers
 app.configure(express.rest());

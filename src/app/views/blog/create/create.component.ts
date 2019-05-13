@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { UtilityService } from 'src/app/services/utility.service';
 import { BlogImage } from 'src/app/interfaces/blog-image';
 import { HttpRequest, HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
+import { environment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-create',
@@ -17,6 +18,7 @@ import { HttpRequest, HttpEvent, HttpEventType, HttpResponse } from '@angular/co
 export class CreateComponent implements OnInit, AfterViewChecked {
   @ViewChild('successLink') successLink: TemplateRef<any>;
   htmlContent;
+  endpointURL = environment.host + '/store';
   validateForm: FormGroup;
   value: string;
   public post = {

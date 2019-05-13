@@ -39,11 +39,11 @@
     <div style="margin:24px 0;"></div>
     <h1>{{'Contenido'}}</h1>
     <app-ngx-editor [ngModelOptions]="{standalone: true}" [placeholder]="'Enter text here...'" [spellcheck]="true" [(ngModel)]="htmlContent"></app-ngx-editor>
-    <button type="submit" nz-button [nzSize]="'large'" nzType="primary">{{'Crear Articulo'}}</button>
+    <button type="submit" class="submit-btn" nz-button [nzSize]="'large'" nzType="primary">{{'Crear Articulo'}}</button>
   </form>
 </div>
 <div *ngIf="post?.created" class="successful">
-  <nz-alert nzType="success" nzMessage="Articulo se creo" [nzDescription]="successLink"></nz-alert>
+  <nz-alert [imageEndPoint]="endpointURL" nzType="success" nzMessage="Articulo se creo" [nzDescription]="successLink"></nz-alert>
   <ng-template #successLink>
     {{'Articulo a sido publicado'}} <a [href]="'/posts/view/' + post?.id">{{'Ver Articulo'}}</a>
   </ng-template>
