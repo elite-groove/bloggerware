@@ -23,6 +23,7 @@
     "bootstrap": "4.2.1",
     "core-js": "^2.5.4",
     "font-awesome": "^4.7.0",
+    "multer": "^1.4.1",
     "ng-zorro-antd": "^7.3.3",
     "ngx-bootstrap": "^4.1.1",
     "ngx-editor": "^4.1.0",

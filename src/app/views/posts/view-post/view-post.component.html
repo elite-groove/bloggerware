@@ -1,3 +1,16 @@
-<p>
-  {{post | json}}
-</p>
+<figure class="snip1336 hover">
+  <!-- <img src="" alt="sample74" /> -->
+  <figcaption>
+    <div nz-row>
+      <div nz-col [nzXs]="24" [nzSm]="12" [nzLg]="8" *ngFor="let img of post?.posters">
+        <nz-avatar [nzShape]="'square'" [nzSize]="400" [nzIcon]="'user'" [nzSrc]="img?.url"></nz-avatar>
+      </div>
+    </div>
+    <h2 class="title">{{post?.title}}</h2>
+    <p [innerHTML]="post?.content"></p>
+    <!-- <div class="buttons">
+      <a href="#" class="follow">Follow</a>
+      <a href="#" class="info">More Info</a>
+    </div> -->
+  </figcaption>
+</figure>

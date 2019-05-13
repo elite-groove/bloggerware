@@ -9,19 +9,21 @@ import { RegisterComponent } from './views/auth/register/register.component';
 import { CallbackComponent } from './views/auth/callback/callback.component';
 import { AuthGuard } from './guards/authentication/auth.guard';
 import { ViewPostComponent } from './views/posts/view-post/view-post.component';
+import { PostsComponent } from './views/posts/posts.component';
+import { ProtectBlogGuard } from './guards/authentication/protect-blog.guard';
 
 
 const routes: Routes = [
-  {path: '', redirectTo: 'home', pathMatch: 'full'},
+  {path: '', redirectTo: 'posts', pathMatch: 'full'},
   {path: 'home', component: HomeComponent},
-  {path: 'posts', children: [
+  {path: 'posts', component: PostsComponent, children: [
     {path: '', redirectTo: 'list', pathMatch: 'full'},
     {path: 'list', component: ViewComponent},
     {path: 'view/:id', component: ViewPostComponent}
   ]},
   {path: 'blog', component: BlogComponent, children: [
     {path: '', redirectTo: 'create', pathMatch: 'full'},    
-    {path: 'create', component: CreateComponent},
+    {path: 'create', component: CreateComponent, canActivate: [ProtectBlogGuard]},
     {path: 'auth', children: [
       {path: '', redirectTo: 'login', pathMatch: 'full'},    
       {path: 'login', component: LoginComponent, canActivate: [AuthGuard]},

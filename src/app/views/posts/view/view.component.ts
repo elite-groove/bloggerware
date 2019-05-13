@@ -52,6 +52,16 @@ export class ViewComponent implements OnInit {
     this.sanitize.bypassSecurityTrustStyle(url);
   }
 
+  log(item) {
+    console.log(item);
+    return item;
+  }
+
+  getPageURL(page) {
+    console.log(page);
+    return `/posts/list?page=${page}`;
+  }
+
 
 
 }

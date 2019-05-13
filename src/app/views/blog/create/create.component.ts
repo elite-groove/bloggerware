@@ -18,7 +18,7 @@ import { environment } from 'src/environments/environment.prod';
 export class CreateComponent implements OnInit, AfterViewChecked {
   @ViewChild('successLink') successLink: TemplateRef<any>;
   htmlContent;
-  endpointURL = environment.host + '/store';
+  endpointURL = environment.host + '/storage';
   validateForm: FormGroup;
   value: string;
   public post = {

@@ -27,6 +27,9 @@ import { CallbackComponent } from './views/auth/callback/callback.component';
 import { TokenGetter } from './classes/token-getter';
 import { ViewPostComponent } from './views/posts/view-post/view-post.component';
 import { DateformatPipe } from './pipes/dateformat.pipe';
+import { PostsComponent } from './views/posts/posts.component';
+import { UrlSerializer } from '@angular/router';
+import { CustomUrlSerializer } from './classes/custom-url-serializer';
 
 
 const icons: IconDefinition[] = [ AccountBookFill, LockOutline, AlertFill, TeamOutline, UserOutline ];
@@ -42,7 +45,8 @@ const icons: IconDefinition[] = [ AccountBookFill, LockOutline, AlertFill, TeamO
     LoginComponent,
     CallbackComponent,
     ViewPostComponent,
-    DateformatPipe
+    DateformatPipe,
+    PostsComponent
   ],
   imports: [
     BrowserModule,
@@ -62,7 +66,8 @@ const icons: IconDefinition[] = [ AccountBookFill, LockOutline, AlertFill, TeamO
   ],
   providers: [
     { provide: NZ_ICONS, useValue: icons },
-    FormParser
+    FormParser,
+    { provide: UrlSerializer, useClass: CustomUrlSerializer }
   ],
   bootstrap: [AppComponent]
 })

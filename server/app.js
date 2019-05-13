@@ -32,13 +32,14 @@ app.use(compress());
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({ extended: true, limit: '50mb'}));
 app.use(favicon(path.join(app.get('public'), 'favicon.ico')));
-// Host the public folder
-app.use('/', express.static(app.get('public')));
 
-app.use('/store', (err, req, res, next) => {
-    console.log(req.body, req);
+app.use('/store', (req, res) => {
+    console.log(req.body);
     res.json(req.body);
 });
+
+// Host the public folder
+app.use('/', express.static(app.get('public')));
 
 // Set up Plugins and providers
 app.configure(express.rest());

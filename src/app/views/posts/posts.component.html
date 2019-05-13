@@ -1,0 +1,14 @@
+<nz-layout class="layout">
+    <nz-header>
+      <div class="logo"></div>
+      <ul nz-menu [nzTheme]="'dark'" [nzMode]="'horizontal'" style="line-height: 64px;">
+        <li nz-menu-item [routerLink]="['/posts/list']">Home</li>
+        <li nz-menu-item [routerLink]="['/posts/list']">Blog</li>
+      </ul>
+    </nz-header>
+    <nz-content style="padding: 0 3vw;">
+      <router-outlet></router-outlet>
+    </nz-content>
+    <nz-footer style="text-align: center;">Universal Magazine ©2019 Powered by Angular</nz-footer>
+  </nz-layout>
+  

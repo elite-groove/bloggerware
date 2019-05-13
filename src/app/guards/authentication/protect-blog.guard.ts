@@ -7,7 +7,7 @@ import { AuthConfig } from 'src/app/interfaces/auth-config';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard implements CanActivate, OnDestroy {
+export class ProtectBlogGuard implements CanActivate {
   _window: Window = window;
   subscriptions = new Subscription();
   authConfig: AuthConfig;
@@ -18,8 +18,8 @@ export class AuthGuard implements CanActivate, OnDestroy {
     this.subscriptions.add(this.authService.authConfig.subscribe(
       (authConfig: AuthConfig) => {
         this.authConfig = authConfig;
-        if (this.authConfig.isLoggedIn) {
-          this.router.navigate(['/blog/create']);
+        if (!this.authConfig.isLoggedIn) {
+          this.router.navigate(['/blog/auth/login']);
         }
       }
     ));
