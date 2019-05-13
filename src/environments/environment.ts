@@ -4,7 +4,14 @@
 
 export const environment = {
   production: false,
-  host: 'http://localhost:3030'
+  host: 'http://localhost:3030',
+  domain: 'http://localhost:3030/',
+  blog: {
+    description: '© La Universal Magazine',
+    author: '© La Universal Magazine',
+    keywords: '© La Universal Magazine',
+    title: 'Cool new blog',
+  }
 };
 
 /*

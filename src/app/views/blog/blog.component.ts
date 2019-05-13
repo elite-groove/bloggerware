@@ -32,7 +32,7 @@ export class BlogComponent implements OnInit {
 
   logout() {
     this.authService.logout();
-    this.router.navigate(['/home']);
+    this.router.navigate(['/posts/list']);
   }
 
 }

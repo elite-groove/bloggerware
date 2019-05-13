@@ -395,16 +395,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
 /* harmony import */ var src_app_services_auth_authentication_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/services/auth/authentication.service */ "./src/app/services/auth/authentication.service.ts");
+/* harmony import */ var _auth0_angular_jwt__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @auth0/angular-jwt */ "./node_modules/@auth0/angular-jwt/index.js");
+
 
 
 
 
 
 var AuthGuard = /** @class */ (function () {
-    function AuthGuard(route, authService, router) {
+    function AuthGuard(route, authService, router, jwtHelper) {
         this.route = route;
         this.authService = authService;
         this.router = router;
+        this.jwtHelper = jwtHelper;
         this._window = window;
         this.subscriptions = new rxjs__WEBPACK_IMPORTED_MODULE_3__["Subscription"]();
     }
@@ -412,7 +415,7 @@ var AuthGuard = /** @class */ (function () {
         var _this = this;
         this.subscriptions.add(this.authService.authConfig.subscribe(function (authConfig) {
             _this.authConfig = authConfig;
-            if (_this.authConfig.isLoggedIn) {
+            if (_this.authConfig.isLoggedIn || !_this.jwtHelper.isTokenExpired()) {
                 _this.router.navigate(['/blog/create']);
             }
         }));
@@ -425,7 +428,8 @@ var AuthGuard = /** @class */ (function () {
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
             providedIn: 'root'
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_2__["ActivatedRoute"], src_app_services_auth_authentication_service__WEBPACK_IMPORTED_MODULE_4__["AuthenticationService"], _angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"]])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_2__["ActivatedRoute"], src_app_services_auth_authentication_service__WEBPACK_IMPORTED_MODULE_4__["AuthenticationService"], _angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"],
+            _auth0_angular_jwt__WEBPACK_IMPORTED_MODULE_5__["JwtHelperService"]])
     ], AuthGuard);
     return AuthGuard;
 }());
@@ -449,16 +453,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
 /* harmony import */ var src_app_services_auth_authentication_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/services/auth/authentication.service */ "./src/app/services/auth/authentication.service.ts");
+/* harmony import */ var _auth0_angular_jwt__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @auth0/angular-jwt */ "./node_modules/@auth0/angular-jwt/index.js");
+
 
 
 
 
 
 var ProtectBlogGuard = /** @class */ (function () {
-    function ProtectBlogGuard(route, authService, router) {
+    function ProtectBlogGuard(route, authService, router, jwtHelper) {
         this.route = route;
         this.authService = authService;
         this.router = router;
+        this.jwtHelper = jwtHelper;
         this._window = window;
         this.subscriptions = new rxjs__WEBPACK_IMPORTED_MODULE_3__["Subscription"]();
     }
@@ -470,7 +477,7 @@ var ProtectBlogGuard = /** @class */ (function () {
                 _this.router.navigate(['/blog/auth/login']);
             }
         }));
-        return true;
+        return this.authService.checkLoggedIn();
     };
     ProtectBlogGuard.prototype.ngOnDestroy = function () {
         this.subscriptions.unsubscribe();
@@ -479,7 +486,8 @@ var ProtectBlogGuard = /** @class */ (function () {
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
             providedIn: 'root'
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_2__["ActivatedRoute"], src_app_services_auth_authentication_service__WEBPACK_IMPORTED_MODULE_4__["AuthenticationService"], _angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"]])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_2__["ActivatedRoute"], src_app_services_auth_authentication_service__WEBPACK_IMPORTED_MODULE_4__["AuthenticationService"], _angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"],
+            _auth0_angular_jwt__WEBPACK_IMPORTED_MODULE_5__["JwtHelperService"]])
     ], ProtectBlogGuard);
     return ProtectBlogGuard;
 }());
@@ -544,15 +552,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
 /* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/environments/environment */ "./src/environments/environment.ts");
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
+/* harmony import */ var _auth0_angular_jwt__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @auth0/angular-jwt */ "./node_modules/@auth0/angular-jwt/index.js");
+/* harmony import */ var _utility_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utility.service */ "./src/app/services/utility.service.ts");
+
+
 
 
 
 
 
 var AuthenticationService = /** @class */ (function () {
-    function AuthenticationService(http) {
+    function AuthenticationService(http, jwtHelper, utility) {
         var _this = this;
         this.http = http;
+        this.jwtHelper = jwtHelper;
+        this.utility = utility;
         this._window = window;
         this._authConfig = {
             isLoggedIn: false
@@ -585,8 +599,9 @@ var AuthenticationService = /** @class */ (function () {
         return this.http.post(src_environments_environment__WEBPACK_IMPORTED_MODULE_3__["environment"].host + '/users', user);
     };
     AuthenticationService.prototype.checkLoggedIn = function () {
-        var isLoggedIn = this._window.localStorage['token'] ? true : false;
+        var isLoggedIn = this._window.localStorage['token'] ? !this.jwtHelper.isTokenExpired() : false;
         this.updateLoggedInStatus(isLoggedIn);
+        return isLoggedIn;
     };
     AuthenticationService.prototype.updateLoggedInStatus = function (status) {
         this._authConfig.isLoggedIn = status;
@@ -595,13 +610,14 @@ var AuthenticationService = /** @class */ (function () {
     AuthenticationService.prototype.logout = function () {
         this._window.localStorage.removeItem('token');
         this._window.localStorage.removeItem('uid');
+        this.utility.createNotification('success', 'Session', 'Session se cerro.');
         this.updateLoggedInStatus(false);
     };
     AuthenticationService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
             providedIn: 'root'
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"]])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"], _auth0_angular_jwt__WEBPACK_IMPORTED_MODULE_5__["JwtHelperService"], _utility_service__WEBPACK_IMPORTED_MODULE_6__["UtilityService"]])
     ], AuthenticationService);
     return AuthenticationService;
 }());
@@ -847,7 +863,7 @@ var LoginComponent = /** @class */ (function () {
         this.authService.localLogin(formValues).subscribe(function (token) {
             console.log(token);
             _this.authService.saveToken(token);
-            _this.utility.createNotification('success', 'Exitoso', 'Acceso a su cuenta.');
+            _this.utility.createNotification('success', 'Exitoso', 'Entro a su cuenta.');
             _this.router.navigate(['/blog/create']);
         }, function (err) {
             _this.utility.createNotification('error', 'error', "Algo salio mal\n " + err.message);
@@ -1033,7 +1049,7 @@ var BlogComponent = /** @class */ (function () {
     };
     BlogComponent.prototype.logout = function () {
         this.authService.logout();
-        this.router.navigate(['/home']);
+        this.router.navigate(['/posts/list']);
     };
     BlogComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
@@ -1320,7 +1336,7 @@ var HomeComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<nz-layout class=\"layout\">\n    <nz-header>\n      <div class=\"logo\"></div>\n      <ul nz-menu [nzTheme]=\"'dark'\" [nzMode]=\"'horizontal'\" style=\"line-height: 64px;\">\n        <li nz-menu-item [routerLink]=\"['/posts/list']\">Home</li>\n        <li nz-menu-item [routerLink]=\"['/posts/list']\">Blog</li>\n      </ul>\n    </nz-header>\n    <nz-content style=\"padding: 0 3vw;\">\n      <router-outlet></router-outlet>\n    </nz-content>\n    <nz-footer style=\"text-align: center;\">Universal Magazine ©2019 Powered by Angular</nz-footer>\n  </nz-layout>\n  "
+module.exports = "<nz-layout class=\"layout\">\n    <nz-header>\n      <div class=\"logo\"></div>\n      <ul nz-menu [nzTheme]=\"'dark'\" [nzMode]=\"'horizontal'\" style=\"line-height: 64px;\">\n        <li nz-menu-item><a [href]=\"domain\">Home</a></li>\n        <li nz-menu-item [routerLink]=\"['/posts/list']\">Blog</li>\n      </ul>\n    </nz-header>\n    <nz-content style=\"padding: 0 3vw;\">\n      <router-outlet></router-outlet>\n    </nz-content>\n    <nz-footer style=\"text-align: center;\">Universal Magazine ©2019 Powered by Angular</nz-footer>\n  </nz-layout>\n  "
 
 /***/ }),
 
@@ -1347,10 +1363,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PostsComponent", function() { return PostsComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/environments/environment */ "./src/environments/environment.ts");
+
 
 
 var PostsComponent = /** @class */ (function () {
     function PostsComponent() {
+        this.domain = /^http/.test(src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].domain) ? src_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].domain : alert('domain must have http(s)');
     }
     PostsComponent.prototype.ngOnInit = function () {
     };
@@ -1376,7 +1395,7 @@ var PostsComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<figure class=\"snip1336 hover\">\n  <!-- <img src=\"\" alt=\"sample74\" /> -->\n  <figcaption>\n    <div nz-row>\n      <div nz-col [nzXs]=\"24\" [nzSm]=\"12\" [nzLg]=\"8\" *ngFor=\"let img of post?.posters\">\n        <nz-avatar [nzShape]=\"'square'\" [nzSize]=\"400\" [nzIcon]=\"'user'\" [nzSrc]=\"img?.url\"></nz-avatar>\n      </div>\n    </div>\n    <h2 class=\"title\">{{post?.title}}</h2>\n    <p [innerHTML]=\"post?.content\"></p>\n    <!-- <div class=\"buttons\">\n      <a href=\"#\" class=\"follow\">Follow</a>\n      <a href=\"#\" class=\"info\">More Info</a>\n    </div> -->\n  </figcaption>\n</figure>\n"
+module.exports = "<nz-breadcrumb style=\"margin:16px 0;\">\n  <!-- <nz-breadcrumb-item>Home</nz-breadcrumb-item> -->\n  <nz-breadcrumb-item>Posts</nz-breadcrumb-item>\n  <nz-breadcrumb-item>View</nz-breadcrumb-item>\n</nz-breadcrumb>\n<figure class=\"snip1336 hover\">\n  <!-- <img src=\"\" alt=\"sample74\" /> -->\n  <figcaption>\n    <div nz-row>\n      <div nz-col [nzXs]=\"24\" [nzSm]=\"12\" [nzLg]=\"8\" *ngFor=\"let img of post?.posters\">\n        <nz-avatar [nzShape]=\"'square'\" [nzSize]=\"400\" [nzIcon]=\"'user'\" [nzSrc]=\"img?.url\"></nz-avatar>\n      </div>\n    </div>\n    <h2 class=\"title\">{{post?.title}}</h2>\n    <p [innerHTML]=\"post?.content\"></p>\n    <!-- <div class=\"buttons\">\n      <a href=\"#\" class=\"follow\">Follow</a>\n      <a href=\"#\" class=\"info\">More Info</a>\n    </div> -->\n  </figcaption>\n</figure>\n"
 
 /***/ }),
 
@@ -1405,18 +1424,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
 /* harmony import */ var src_app_services_blog_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/services/blog.service */ "./src/app/services/blog.service.ts");
+/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/platform-browser */ "./node_modules/@angular/platform-browser/fesm5/platform-browser.js");
+/* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/environments/environment */ "./src/environments/environment.ts");
+
+
 
 
 
 
 var ViewPostComponent = /** @class */ (function () {
-    function ViewPostComponent(route, blogService) {
+    function ViewPostComponent(route, blogService, meta, title) {
         var _this = this;
         this.route = route;
         this.blogService = blogService;
+        this.meta = meta;
+        this.title = title;
         this.getParams().then(function (params) {
             _this.blogService.getPost(_this.params['id']).subscribe(function (post) {
                 _this.post = post;
+                _this.meta.addTag({ name: 'description', content: _this.post.content });
+                _this.meta.addTag({ name: 'author', content: src_environments_environment__WEBPACK_IMPORTED_MODULE_5__["environment"].author });
+                _this.meta.addTag({ name: 'keywords', content: _this.post.content });
+                _this.title.setTitle(_this.post.title);
             });
         });
     }
@@ -1443,7 +1472,7 @@ var ViewPostComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./view-post.component.html */ "./src/app/views/posts/view-post/view-post.component.html"),
             styles: [__webpack_require__(/*! ./view-post.component.scss */ "./src/app/views/posts/view-post/view-post.component.scss")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_2__["ActivatedRoute"], src_app_services_blog_service__WEBPACK_IMPORTED_MODULE_3__["BlogService"]])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_2__["ActivatedRoute"], src_app_services_blog_service__WEBPACK_IMPORTED_MODULE_3__["BlogService"], _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__["Meta"], _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__["Title"]])
     ], ViewPostComponent);
     return ViewPostComponent;
 }());
@@ -1459,7 +1488,7 @@ var ViewPostComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<nz-breadcrumb style=\"margin:16px 0;\">\n    <nz-breadcrumb-item>Home</nz-breadcrumb-item>\n  </nz-breadcrumb>\n  <div style=\"background:#fff; padding: 24px; min-height: 280px;\">\n    <div nz-row>\n      <div nz-col ontouchstart=\"\" [nzLg]=\"8\" [nzSm]=\"12\" *ngFor=\"let post of posts?.data | dateformat\">\n          <div class=\"example-2 card\">\n              <div class=\"wrapper\" [ngStyle]=\"{'background-image': 'url(' + (post?.posters[0]?.url || '/assets/navy.jpg') + ')'}\">\n                <div class=\"header\">\n                  <div class=\"date\">\n                    <span>{{ post.createdAt }}</span>\n                  </div>\n                  <ul class=\"menu-content\">\n                    <li>\n                      <div class=\"fa fa-bookmark\"></div>\n                    </li>\n                    <li><div class=\"fa fa-heart\"><span>18</span></div></li>\n                    <li><div class=\"fa fa-comment\"><span>3</span></div></li>\n                  </ul>\n                </div>\n                <div class=\"data\">\n                  <div class=\"content\">\n                    <!-- <span class=\"author\">Jane Doe</span> -->\n                    <h1 class=\"title\"><a [routerLink]=\"['/posts/view/' + post._id]\">{{ post.title }}</a></h1>\n                    <p class=\"text\" [innerHTML]=\"post.content\"></p>\n                    <a [routerLink]=\"['/posts/view/' + post._id]\" class=\"button\">Read more</a>\n                  </div>\n                </div>\n              </div>\n            </div>\n      </div>\n    </div>\n  </div>\n  <div class=\"pagination\">\n    <nz-pagination [nzTotal]=\"posts?.total\" [nzItemRender]=\"hyperlink\" [nzPageIndex]=\"params?.page || 1\" (nzPageIndexChange)=\"handlePageChange($event)\"></nz-pagination>\n    <ng-template #hyperlink let-pageParams=\"$implicit\" let-pageNumber=\"page\">\n      <a *ngIf=\"pageParams === 'pre'\"><</a>\n      <a *ngIf=\"pageParams === 'page'\" [routerLink]=\"[ getPageURL(pageNumber) ]\">{{ pageNumber }}</a>\n      <a *ngIf=\"pageParams === 'next'\">></a>\n    </ng-template>\n    \n  </div>"
+module.exports = "<nz-breadcrumb style=\"margin:16px 0;\">\n    <!-- <nz-breadcrumb-item>Home</nz-breadcrumb-item> -->\n    <nz-breadcrumb-item>Posts</nz-breadcrumb-item>\n  </nz-breadcrumb>\n  <div style=\"background:#fff; padding: 24px; min-height: 280px;\">\n    <div nz-row>\n      <div nz-col ontouchstart=\"\" [nzLg]=\"8\" [nzSm]=\"12\" *ngFor=\"let post of posts?.data | dateformat\">\n          <div class=\"example-2 card\">\n              <div class=\"wrapper\" [ngStyle]=\"{'background-image': 'url(' + (post?.posters[0]?.url || '/assets/navy.jpg') + ')'}\">\n                <div class=\"header\">\n                  <div class=\"date\">\n                    <span>{{ post.createdAt }}</span>\n                  </div>\n                  <ul class=\"menu-content\">\n                    <li>\n                      <div class=\"fa fa-bookmark\"></div>\n                    </li>\n                    <li><div class=\"fa fa-heart\"><span>18</span></div></li>\n                    <li><div class=\"fa fa-comment\"><span>3</span></div></li>\n                  </ul>\n                </div>\n                <div class=\"data\">\n                  <div class=\"content\">\n                    <!-- <span class=\"author\">Jane Doe</span> -->\n                    <h1 class=\"title\"><a [routerLink]=\"['/posts/view/' + post._id]\">{{ post.title }}</a></h1>\n                    <p class=\"text\" [innerHTML]=\"post.content\"></p>\n                    <a [routerLink]=\"['/posts/view/' + post._id]\" class=\"button\">Read more</a>\n                  </div>\n                </div>\n              </div>\n            </div>\n      </div>\n    </div>\n  </div>\n  <div class=\"pagination\">\n    <nz-pagination [nzTotal]=\"posts?.total\" [nzItemRender]=\"hyperlink\" [nzPageIndex]=\"params?.page || 1\" (nzPageIndexChange)=\"handlePageChange($event)\"></nz-pagination>\n    <ng-template #hyperlink let-pageParams=\"$implicit\" let-pageNumber=\"page\">\n      <a *ngIf=\"pageParams === 'pre'\"><</a>\n      <a *ngIf=\"pageParams === 'page'\" [routerLink]=\"[ getPageURL(pageNumber) ]\">{{ pageNumber }}</a>\n      <a *ngIf=\"pageParams === 'next'\">></a>\n    </ng-template>\n    \n  </div>"
 
 /***/ }),
 
@@ -1489,22 +1518,30 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_services_blog_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/blog.service */ "./src/app/services/blog.service.ts");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/platform-browser */ "./node_modules/@angular/platform-browser/fesm5/platform-browser.js");
+/* harmony import */ var src_environments_environment__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/environments/environment */ "./src/environments/environment.ts");
+
 
 
 
 
 
 var ViewComponent = /** @class */ (function () {
-    function ViewComponent(blogService, router, route, sanitize) {
+    function ViewComponent(blogService, router, route, sanitize, meta, title) {
         var _this = this;
         this.blogService = blogService;
         this.router = router;
         this.route = route;
         this.sanitize = sanitize;
+        this.meta = meta;
+        this.title = title;
         this.getParams().then(function (params) {
             _this.blogService.getPosts((_this.params.page - 1) * 10).subscribe(function (posts) {
                 console.log(posts);
                 _this.posts = posts;
+                _this.meta.addTag({ name: 'description', content: src_environments_environment__WEBPACK_IMPORTED_MODULE_5__["environment"].blog.description });
+                _this.meta.addTag({ name: 'author', content: src_environments_environment__WEBPACK_IMPORTED_MODULE_5__["environment"].blog.author });
+                _this.meta.addTag({ name: 'keywords', content: src_environments_environment__WEBPACK_IMPORTED_MODULE_5__["environment"].blog.keywords });
+                _this.title.setTitle(src_environments_environment__WEBPACK_IMPORTED_MODULE_5__["environment"].blog.title);
             });
         });
     }
@@ -1547,7 +1584,8 @@ var ViewComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./view.component.html */ "./src/app/views/posts/view/view.component.html"),
             styles: [__webpack_require__(/*! ./view.component.scss */ "./src/app/views/posts/view/view.component.scss")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [src_app_services_blog_service__WEBPACK_IMPORTED_MODULE_2__["BlogService"], _angular_router__WEBPACK_IMPORTED_MODULE_3__["Router"], _angular_router__WEBPACK_IMPORTED_MODULE_3__["ActivatedRoute"], _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__["DomSanitizer"]])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [src_app_services_blog_service__WEBPACK_IMPORTED_MODULE_2__["BlogService"], _angular_router__WEBPACK_IMPORTED_MODULE_3__["Router"], _angular_router__WEBPACK_IMPORTED_MODULE_3__["ActivatedRoute"], _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__["DomSanitizer"],
+            _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__["Meta"], _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__["Title"]])
     ], ViewComponent);
     return ViewComponent;
 }());
@@ -1568,8 +1606,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "environment", function() { return environment; });
 var environment = {
     production: true,
-    host: ''
+    host: '',
+    domain: 'http://luisconstante.com/',
+    blog: {
+        description: '© La Universal Magazine',
+        author: '© La Universal Magazine',
+        keywords: '© La Universal Magazine',
+        title: 'Cool new blog',
+    }
 };
+var done = false;
+done ? alert('Configure Env Variables for Angular') : '';
 
 
 /***/ }),
@@ -1589,7 +1636,14 @@ __webpack_require__.r(__webpack_exports__);
 // The list of file replacements can be found in `angular.json`.
 var environment = {
     production: false,
-    host: 'http://localhost:3030'
+    host: 'http://localhost:3030',
+    domain: 'http://localhost:3030/',
+    blog: {
+        description: '© La Universal Magazine',
+        author: '© La Universal Magazine',
+        keywords: '© La Universal Magazine',
+        title: 'Cool new blog',
+    }
 };
 /*
  * For easier debugging in development mode, you can import the following file

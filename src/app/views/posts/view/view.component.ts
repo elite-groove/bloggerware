@@ -3,7 +3,8 @@ import { BlogService } from 'src/app/services/blog.service';
 import { PostResponse, Posts } from 'src/app/interfaces/post-response';
 import { Observable } from 'rxjs';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, Meta, Title } from '@angular/platform-browser';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-view',
@@ -15,13 +16,18 @@ export class ViewComponent implements OnInit {
   public params;
 
 
-  constructor(private blogService: BlogService, private router: Router, private route: ActivatedRoute, private sanitize: DomSanitizer) {
+  constructor(private blogService: BlogService, private router: Router, private route: ActivatedRoute, private sanitize: DomSanitizer,
+    private meta: Meta, private title: Title) {
     this.getParams().then(
       params => {
         this.blogService.getPosts((this.params.page - 1) * 10).subscribe(
           (posts: PostResponse) => {
             console.log(posts);
             this.posts = posts;
+            this.meta.addTag({ name: 'description', content: environment.blog.description });
+            this.meta.addTag({ name: 'author', content: environment.blog.author });
+            this.meta.addTag({ name: 'keywords', content: environment.blog.keywords });
+            this.title.setTitle(environment.blog.title);
           }
         );
       }

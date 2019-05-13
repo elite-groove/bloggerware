@@ -4,6 +4,8 @@ import { environment } from 'src/environments/environment';
 import { Token } from 'src/app/interfaces/token';
 import { BehaviorSubject } from 'rxjs';
 import { LocalUser } from 'src/app/interfaces/local-user';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { UtilityService } from '../utility.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +17,7 @@ export class AuthenticationService {
   }
   authConfig = new BehaviorSubject<any>(this._authConfig);
 
-  constructor(private http: HttpClient) { 
+  constructor(private http: HttpClient, private jwtHelper: JwtHelperService, private utility: UtilityService) { 
     this.authConfig.subscribe(
       authConfig => {
         this._authConfig = authConfig;
@@ -53,8 +55,9 @@ export class AuthenticationService {
   }
 
   checkLoggedIn() {
-    const isLoggedIn = this._window.localStorage['token'] ? true : false;
+    const isLoggedIn = this._window.localStorage['token'] ? !this.jwtHelper.isTokenExpired() : false;
     this.updateLoggedInStatus(isLoggedIn);
+    return isLoggedIn;
   }
 
   updateLoggedInStatus(status: boolean) {
@@ -65,6 +68,7 @@ export class AuthenticationService {
   logout() {
     this._window.localStorage.removeItem('token');
     this._window.localStorage.removeItem('uid');
+    this.utility.createNotification('success', 'Session', 'Session se cerro.')
     this.updateLoggedInStatus(false);
   }
 }

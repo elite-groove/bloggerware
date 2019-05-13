@@ -23,7 +23,7 @@ const uploadCloudinary = (path) => {
 module.exports = function (options = {}) {
   return async context => {
     console.log(context);
-    const path = context.app.get('public') + '/' + context.result.id;
+    const path = context.app.get('public') + '/uploads/' + context.result.id;
     return uploadCloudinary(path).then(res => {
       context.result = res;
       return context;

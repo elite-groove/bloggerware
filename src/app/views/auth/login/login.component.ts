@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
       (token: Token) => {
         console.log(token);
         this.authService.saveToken(token);
-        this.utility.createNotification('success', 'Exitoso', 'Acceso a su cuenta.');
+        this.utility.createNotification('success', 'Exitoso', 'Entro a su cuenta.');
         this.router.navigate(['/blog/create']);
       }, err => {
         this.utility.createNotification('error', 'error', `Algo salio mal\n ${err.message}`);
