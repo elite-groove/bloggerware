@@ -43,6 +43,10 @@ export class AuthenticationService {
     return this._window.location.href = (environment.host + '/auth/google/callback');
   }
 
+  localLogin(data) {
+    return this.http.post(environment.host + '/authentication', data);
+  }
+
   localRegister(user) {
     console.log(user);
     return this.http.post(environment.host + '/users', user);

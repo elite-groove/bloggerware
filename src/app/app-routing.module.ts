@@ -8,13 +8,16 @@ import { LoginComponent } from './views/auth/login/login.component';
 import { RegisterComponent } from './views/auth/register/register.component';
 import { CallbackComponent } from './views/auth/callback/callback.component';
 import { AuthGuard } from './guards/authentication/auth.guard';
+import { ViewPostComponent } from './views/posts/view-post/view-post.component';
+
 
 const routes: Routes = [
   {path: '', redirectTo: 'home', pathMatch: 'full'},
   {path: 'home', component: HomeComponent},
   {path: 'posts', children: [
-    {path: '', redirectTo: 'view', pathMatch: 'full'},
-    {path: 'view/:id', component: ViewComponent}
+    {path: '', redirectTo: 'list', pathMatch: 'full'},
+    {path: 'list', component: ViewComponent},
+    {path: 'view/:id', component: ViewPostComponent}
   ]},
   {path: 'blog', component: BlogComponent, children: [
     {path: '', redirectTo: 'create', pathMatch: 'full'},    

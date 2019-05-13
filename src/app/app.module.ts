@@ -6,6 +6,7 @@ import { IconDefinition } from '@ant-design/icons-angular';
 import { NgZorroAntdModule, NZ_ICONS } from 'ng-zorro-antd';
 import { ReactiveFormsModule } from '@angular/forms';
 import { JwtModule } from '@auth0/angular-jwt';
+import { NgxEditorModule } from 'ngx-editor';
 
 // Import what you need. RECOMMENDED. ✔️
 import { AccountBookFill, AlertFill, TeamOutline, UserOutline, LockOutline } from '@ant-design/icons-angular/icons';
@@ -24,6 +25,8 @@ import { RegisterComponent } from './views/auth/register/register.component';
 import { LoginComponent } from './views/auth/login/login.component';
 import { CallbackComponent } from './views/auth/callback/callback.component';
 import { TokenGetter } from './classes/token-getter';
+import { ViewPostComponent } from './views/posts/view-post/view-post.component';
+import { DateformatPipe } from './pipes/dateformat.pipe';
 
 
 const icons: IconDefinition[] = [ AccountBookFill, LockOutline, AlertFill, TeamOutline, UserOutline ];
@@ -37,7 +40,9 @@ const icons: IconDefinition[] = [ AccountBookFill, LockOutline, AlertFill, TeamO
     BlogComponent,
     RegisterComponent,
     LoginComponent,
-    CallbackComponent
+    CallbackComponent,
+    ViewPostComponent,
+    DateformatPipe
   ],
   imports: [
     BrowserModule,
@@ -47,6 +52,7 @@ const icons: IconDefinition[] = [ AccountBookFill, LockOutline, AlertFill, TeamO
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    NgxEditorModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: new TokenGetter().value,

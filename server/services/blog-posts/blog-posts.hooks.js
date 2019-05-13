@@ -1,22 +1,25 @@
 const { authenticate } = require('@feathersjs/authentication').hooks;
+const { protect } = require('@feathersjs/authentication-local').hooks;
 
 const handlePostCreation = require('../../hooks/handle-post-creation');
 
+const handleBlacklist = require('../../hooks/handle-blacklist');
+
 module.exports = {
   before: {
-    all: [ authenticate('jwt') ],
+    all: [ ],
     find: [],
     get: [],
-    create: [],
-    update: [],
-    patch: [],
-    remove: []
+    create: [authenticate('jwt')],
+    update: [authenticate('jwt')],
+    patch: [authenticate('jwt')],
+    remove: [authenticate('jwt')]
   },
 
   after: {
     all: [],
-    find: [],
-    get: [],
+    find: [handleBlacklist()],
+    get: [protect('userId')],
     create: [],
     update: [],
     patch: [],

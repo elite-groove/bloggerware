@@ -38,9 +38,7 @@
       placeholder="Autosize height based on content lines" ngModel nzAutosize required></textarea>
     <div style="margin:24px 0;"></div>
     <h1>{{'Contenido'}}</h1>
-    <textarea name="content" [ngModelOptions]="{standalone: true}" nz-input
-      placeholder="Autosize height with minimum and maximum number of lines" [(ngModel)]="value"
-      [nzAutosize]="{ minRows: 6, maxRows: 6 }" required></textarea>
+    <app-ngx-editor [ngModelOptions]="{standalone: true}" [placeholder]="'Enter text here...'" [spellcheck]="true" [(ngModel)]="htmlContent"></app-ngx-editor>
     <button type="submit" nz-button [nzSize]="'large'" nzType="primary">{{'Crear Articulo'}}</button>
   </form>
 </div>

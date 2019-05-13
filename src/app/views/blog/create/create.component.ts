@@ -16,6 +16,7 @@ import { HttpRequest, HttpEvent, HttpEventType, HttpResponse } from '@angular/co
 })
 export class CreateComponent implements OnInit, AfterViewChecked {
   @ViewChild('successLink') successLink: TemplateRef<any>;
+  htmlContent;
   validateForm: FormGroup;
   value: string;
   public post = {
@@ -45,6 +46,7 @@ export class CreateComponent implements OnInit, AfterViewChecked {
   onSubmit($event, form) {
     $event.preventDefault();
     const formValues: any = this.formParser.parse(form);
+    formValues.content = this.htmlContent;
 
     // format url for mongoose schema
     formValues.posters = [...this.fileList].map((fileInfo, idx, arr) => {
