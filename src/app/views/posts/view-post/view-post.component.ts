@@ -22,7 +22,7 @@ export class ViewPostComponent implements OnInit {
           (post: Post) => {
             this.post = post;
             this.meta.addTag({ name: 'description', content: this.post.content });
-            this.meta.addTag({ name: 'author', content: environment.author });
+            this.meta.addTag({ name: 'author', content: environment.blog.author });
             this.meta.addTag({ name: 'keywords', content: this.post.content });
             this.title.setTitle(this.post.title);
           }

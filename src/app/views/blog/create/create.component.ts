@@ -63,6 +63,7 @@ export class CreateComponent implements OnInit, AfterViewChecked {
         this.post.id = post._id;
       }
     , err => {
+        console.log(err);
         this.notify.createNotification('error', 'Error', `Algo salio mal, contacta al administrador si sigue sin funcionar. 510-283-8390 \n ${err.message}`);
       }
     );

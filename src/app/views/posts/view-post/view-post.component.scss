@@ -1,6 +1,12 @@
 :host {
   @import url(https://fonts.googleapis.com/css?family=Roboto:300,400,600);
 
+  ::ng-deep {
+    video {
+      width: 70vw;
+    }
+  }
+
   .gallery {
     width: 100%;
     height: auto;
