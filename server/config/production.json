@@ -1,5 +1,5 @@
 {
-  "host": "blogger-software.herokuapp.com",
+  "host": "/",
   "port": "PORT",
   "public": "../public/",
   "paginate": {
