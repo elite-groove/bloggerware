@@ -10,5 +10,5 @@ export const environment = {
   }
 };
 
-const done = false;
+const done = true;
 done ? '' : alert('Configure Env Variables for Angular');
