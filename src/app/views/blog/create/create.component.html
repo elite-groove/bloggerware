@@ -14,7 +14,7 @@
           [nzShowUploadList]="showUploadList"
           [nzPreview]="handlePreview"
           [nzCustomRequest]="customReq"
-          nzAction="http://localhost:3030/storage"
+          [nzAction]="endpointURL"
         >
           <i nz-icon nzType="plus"></i>
           <div class="ant-upload-text">Upload</div>
