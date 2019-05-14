@@ -6,4 +6,9 @@ export interface Post {
     createdAt: string;
     updatedAt: string;
     __v:       number;
+    posters: Poster;
+}
+
+export interface Poster {
+    url: string
 }

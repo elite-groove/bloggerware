@@ -59,7 +59,7 @@ const icons: IconDefinition[] = [ AccountBookFill, LockOutline, AlertFill, TeamO
     NgxEditorModule,
     JwtModule.forRoot({
       config: {
-        tokenGetter: new TokenGetter().value,
+        tokenGetter: TokenGetter,
         whitelistedDomains: ['localhost:3030'],
       }
     })

@@ -23,8 +23,16 @@ const authentication = require('./authentication');
 
 const app = express(feathers());
 
+const prerender = require('prerender-node');
 // Load app configuration
 app.configure(configuration());
+prerender.set('prerenderServiceUrl', 'http://protected-bayou-19708.herokuapp.com');
+prerender.whitelisted(['^/']);
+prerender.blacklisted(['^/blog']);
+prerender.crawlerUserAgents.push('googlebot');
+prerender.crawlerUserAgents.push('bingbot');
+prerender.crawlerUserAgents.push('yandex');
+app.use(prerender);
 // Enable security, CORS, compression, favicon and body parsing
 app.use(helmet());
 app.use(cors());
@@ -32,11 +40,6 @@ app.use(compress());
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({ extended: true, limit: '50mb'}));
 app.use(favicon(path.join(app.get('public'), 'favicon.ico')));
-
-app.use('/store', (req, res) => {
-    console.log(req.body);
-    res.json(req.body);
-});
 
 // Host the public folder
 app.use('/', express.static(app.get('public')));

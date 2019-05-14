@@ -1,5 +1,3 @@
-export class TokenGetter {
-    value() {
-        return window.localStorage['token'];
-    }
+export function TokenGetter() {
+    return window.localStorage['token'];
 }
